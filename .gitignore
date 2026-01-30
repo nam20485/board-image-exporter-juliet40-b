@@ -423,3 +423,8 @@ gha-creds-*.json
 docker/validation/logs/
 docker/validation/results.jsonl
 docker/.env
+
+# OpenMemory - IDE/Assistant specific rules
+.cursor\rules\openmemory.mdc
+CLAUDE.md
+AGENTS.md
