@@ -2,7 +2,7 @@
 Geometry utilities for transforms and measurements.
 """
 
-from typing import Iterable, Tuple
+from typing import Tuple
 
 
 def rotate(point: Tuple[float, float], degrees: float) -> Tuple[float, float]:
