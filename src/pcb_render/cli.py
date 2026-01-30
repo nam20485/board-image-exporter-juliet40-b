@@ -8,7 +8,6 @@ Reason: Switched from argparse to Typer for modern CLI experience with automatic
         completion support.
 """
 
-import sys
 from pathlib import Path
 from typing import Annotated, Optional
 from typing_extensions import Literal
@@ -91,12 +90,19 @@ def main(argv: list[str] | None = None) -> int:
     """Entry point wrapper for testing and programmatic access."""
     try:
         if argv is not None:
-            # For testing with explicit argv
-            sys.argv = ["pcb-render"] + list(argv)
-        app()
+            # Use Typer's standalone_mode to handle argv without modifying sys.argv
+            # This is safer for testing and avoids global state mutation
+            app(argv, standalone_mode=False)
+        else:
+            app()
         return 0
     except SystemExit as e:
-        return e.code if e.code is not None else 0
+        # e.code can be None, int, or str; normalize to int
+        return int(e.code) if e.code is not None and isinstance(e.code, int) else (0 if e.code is None else 1)
+    except KeyboardInterrupt:
+        # Allow keyboard interrupts to propagate naturally
+        console.print("\n[yellow]Interrupted by user[/yellow]")
+        return 130  # Standard exit code for SIGINT
     except Exception as e:
         console.print(f"[red]✗ Error: {e}[/red]", style="bold")
         return 1

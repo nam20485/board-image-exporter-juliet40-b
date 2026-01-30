@@ -4,5 +4,7 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"python.defaultInterpreterPath": "d:\\src\\github\\nam20485\\dynamic_workflows\\board-image-exporter-juliet40-b\\.venv\\Scripts\\python.exe"
+	}
 }
