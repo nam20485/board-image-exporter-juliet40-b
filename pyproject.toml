@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pcb-renderer-cli"
+version = "0.1.0"
+description = "CLI tool to parse, validate, and render PCB ECAD JSON inputs."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "nam20485" }]
+dependencies = [
+	"pydantic>=2.6",
+	"numpy>=1.26",
+	"matplotlib>=3.8",
+	"typer>=0.12",
+]
+
+[project.optional-dependencies]
+dev = [
+	"pytest>=8.0",
+	"hypothesis>=6.90",
+	"syrupy>=4.6",
+	"ruff>=0.6.0",
+]
+
+[project.scripts]
+pcb-render = "pcb_render.cli:main"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"

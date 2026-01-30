@@ -41,12 +41,12 @@ The PCB Renderer serves as a bridge between raw ECAD data and visual verificatio
 #### **Features**
 
 * **CLI Commands:**  
-  * render \<file\> \-o \<output\>: core command to process a board. Options include \--format (svg/png/pdf), \--dpi, and \--layers (to render specific stackup layers).  
-  * validate \<file\>: Runs the validation suite against a file without generating graphics, returning a JSON report of errors found.  
-  * info \<file\>: Prints board metadata (dimensions, layer count, component count) to stdout.  
+  * render <file> -o <output>: core command to process a board. Options include --format (svg/png/pdf), --dpi, and --layers (to render specific stackup layers).  
+  * validate <file>: Runs the validation suite against a file without generating graphics, returning a JSON report of errors found.  
+  * info <file>: Prints board metadata (dimensions, layer count, component count) to stdout.  
 * **Data Ingestion & Normalization:**  
   * Parses JSON files matching the provided Quilter schema.  
-  * **Auto-normalization:** Immediately converts mixed units (e.g., microns in board\_6layer\_hdi.json) to a standard internal millimeter (mm) representation.  
+  * **Auto-normalization:** Immediately converts mixed units (e.g., microns in board_6layer_hdi.json) to a standard internal millimeter (mm) representation.  
 * **Geometric Validation Engine:**  
   * Detects fatal errors (e.g., open polygons for board boundaries).  
   * Validates topology (e.g., vias referencing non-existent layers).  
@@ -62,15 +62,15 @@ The PCB Renderer serves as a bridge between raw ECAD data and visual verificatio
 #### **Test Cases**
 
 * **Unit Tests:**  
-  * Verify coordinate transforms (Local \-\> World \-\> Screen).  
+  * Verify coordinate transforms (Local -> World -> Screen).  
   * Test individual parsing of Point, Segment, Polyline.  
 * **Property-Based Tests (Hypothesis):**  
   * *Invariant:* Rotation of a polygon by 360° results in the original polygon.  
-  * *Invariant:* A board's bounding box area must be \>= the area of its boundary polygon.  
+  * *Invariant:* A board's bounding box area must be >= the area of its boundary polygon.  
 * **Snapshot Tests:**  
-  * Visual regression testing using syrupy. Renders board.json and board\_kappa.json to SVG and compares against stored "golden" files to ensure pixel-perfect stability.  
+  * Visual regression testing using syrupy. Renders board.json and board_kappa.json to SVG and compares against stored "golden" files to ensure pixel-perfect stability.  
 * **Invalid Board Suite:**  
-  * Explicit tests against the 14 required failure scenarios (e.g., missing\_boundary, self\_intersecting\_polygon).
+  * Explicit tests against the 14 required failure scenarios (e.g., missing_boundary, self_intersecting_polygon).
 
 #### **Logging**
 
@@ -78,7 +78,7 @@ The PCB Renderer serves as a bridge between raw ECAD data and visual verificatio
 * **CLI Output:**  
   * INFO: High-level status ("Parsing board...", "Rendering layer TOP...").  
   * ERROR: Structured validation failures.  
-* **Debug Mode:** \--verbose flag enables DEBUG logs showing matrix transformation details and bounding box calculations.
+* **Debug Mode:** --verbose flag enables DEBUG logs showing matrix transformation details and bounding box calculations.
 
 #### **Containerization: Docker**
 
@@ -91,7 +91,7 @@ The PCB Renderer serves as a bridge between raw ECAD data and visual verificatio
 
 * **Service Name:** renderer  
 * **Config:** Mounts local current directory to /app/workdir.  
-* **Environment:** Sets PCB\_RENDER\_DPI=300 and PCB\_RENDER\_FORMAT=svg defaults.
+* **Environment:** Sets PCB_RENDER_DPI=300 and PCB_RENDER_FORMAT=svg defaults.
 
 #### **Swagger/OpenAPI**
 
@@ -105,7 +105,7 @@ The PCB Renderer serves as a bridge between raw ECAD data and visual verificatio
 
 #### **Acceptance Criteria**
 
-1. **Valid Rendering:** The tool successfully renders board.json, board\_kappa.json, and board\_mixed\_tech.json to SVG without crashing.  
+1. **Valid Rendering:** The tool successfully renders board.json, board_kappa.json, and board_mixed_tech.json to SVG without crashing.  
 2. **Invalid Detection:** The tool correctly identifies and reports errors for **all 14** invalid board categories mentioned in the challenge (e.g., "Component placed outside boundary", "Trace width negative").  
 3. **Visual Accuracy:**  
    * Top layer traces are Red.  
@@ -127,12 +127,12 @@ The PCB Renderer serves as a bridge between raw ECAD data and visual verificatio
 #### **Frameworks, Tools, Packages**
 
 * **Core Logic:**  
-  * pydantic \~= 2.0: Strict data parsing and schema validation.  
-  * numpy \~= 1.26: Vectorized geometric transformations and matrix math.  
+  * pydantic ~= 2.0: Strict data parsing and schema validation.  
+  * numpy ~= 1.26: Vectorized geometric transformations and matrix math.  
 * **CLI:**  
   * argparse: Standard library (Zero-dependency preference for simpler review) OR typer (if modern DX is preferred). *Plan assumes standard library to minimize deps.*  
 * **Rendering:**  
-  * matplotlib \~= 3.8: Robust, backend-agnostic 2D plotting engine for SVG/PDF/PNG generation.  
+  * matplotlib ~= 3.8: Robust, backend-agnostic 2D plotting engine for SVG/PDF/PNG generation.  
 * **Testing & QA:**  
   * pytest: Test runner.  
   * hypothesis: Property-based testing engine.  
@@ -146,30 +146,30 @@ The PCB Renderer serves as a bridge between raw ECAD data and visual verificatio
 * **Layout:**  
   Plaintext  
   pcb-renderer/  
-  ├── pyproject.toml      \# Dependencies and Tool Config  
-  ├── uv.lock             \# Pinned dependency tree  
+  ├── pyproject.toml      # Dependencies and Tool Config  
+  ├── uv.lock             # Pinned dependency tree  
   ├── src/  
-  │   └── pcb\_render/  
-  │       ├── \_\_init\_\_.py  
-  │       ├── cli.py          \# Entry point  
-  │       ├── models.py       \# Pydantic Schemas (Board, Component, etc.)  
-  │       ├── geometry.py     \# Matrix transforms & math utils  
-  │       ├── render.py       \# Matplotlib drawing logic  
-  │       └── validate.py     \# 14-rule validation engine  
+  │   └── pcb_render/  
+  │       ├── __init__.py  
+  │       ├── cli.py          # Entry point  
+  │       ├── models.py       # Pydantic Schemas (Board, Component, etc.)  
+  │       ├── geometry.py     # Matrix transforms & math utils  
+  │       ├── render.py       # Matplotlib drawing logic  
+  │       └── validate.py     # 14-rule validation engine  
   ├── tests/  
-  │   ├── fixtures/           \# Valid JSON examples  
-  │   ├── invalid\_boards/     \# 14 invalid JSON test cases  
-  │   └── snapshots/          \# SVG Gold Masters  
+  │   ├── fixtures/           # Valid JSON examples  
+  │   ├── invalid_boards/     # 14 invalid JSON test cases  
+  │   └── snapshots/          # SVG Gold Masters  
   └── README.md
 
 #### **GitHub**
 
-* **Repo:** https://github.com/\[user\]/pcb-renderer  
+* **Repo:** https://github.com/[user]/pcb-renderer  
 * **Branch:** main  
 * **CI/CD:** GitHub Actions workflow (ci.yml) that runs:  
   1. uv sync (Install deps)  
   2. ruff check . (Lint)  
-  3. pytest \--cov (Test with coverage)
+  3. pytest --cov (Test with coverage)
 
 #### **Deliverables**
 
@@ -177,7 +177,7 @@ The PCB Renderer serves as a bridge between raw ECAD data and visual verificatio
 2. **CLI Tool:** Executable script available on path after install.  
 3. **Test Report:** Pass rate for unit, property, and snapshot tests.  
 4. **Validation Logic:** A distinct module demonstrating the logic for catching the 14 invalid board states.  
-5. **Rendered Artifacts:** Example SVGs generated from the provided board\*.json files.
+5. **Rendered Artifacts:** Example SVGs generated from the provided board*.json files.
 
 ### ---
 
@@ -189,7 +189,7 @@ The validate.py module will specifically check for:
 
 1. **Syntax/Schema:** JSON malformed, missing required keys (boundary, stackup).  
 2. **Geometry:** Self-intersecting polygons (Bowtie effect), open loops for boundaries.  
-3. **Physical:** Negative dimensions (trace width \< 0, drill diameter \< 0).  
+3. **Physical:** Negative dimensions (trace width < 0, drill diameter < 0).  
 4. **Topology:** Vias referencing undefined layers, components referencing undefined footprints.  
 5. **Placement:** Components fully outside the board boundary.  
 6. **Stackup:** Duplicate layer names, invalid material definitions.
@@ -201,18 +201,18 @@ To ensure text legibility (one of the specific requirements in the PDF is "Board
 Python
 
 \# Pseudo-code for Matplotlib text effect  
-text\_path \= TextPath((x, y), ref\_des, size=font\_size)  
-patch \= PathPatch(text\_path, facecolor='white', linewidth=3, edgecolor='white') \# Halo  
-ax.add\_patch(patch)  
-ax.text(x, y, ref\_des, color='black') \# Text on top
+text_path = TextPath((x, y), ref_des, size=font_size)  
+patch = PathPatch(text_path, facecolor='white', linewidth=3, edgecolor='white') # Halo  
+ax.add_patch(patch)  
+ax.text(x, y, ref_des, color='black') # Text on top
 
 #### **Coordinate Normalization**
 
 As detailed in the Design Plan, the app will handle the designUnits field in metadata immediately.
 
-* If designUnits \== "MICRON": Divide all coords by 1000\.  
-* If designUnits \== "MILS": Multiply by 0.0254.  
-* If designUnits \== "INCH": Multiply by 25.4.  
+* If designUnits == "MICRON": Divide all coords by 1000.  
+* If designUnits == "MILS": Multiply by 0.0254.  
+* If designUnits == "INCH": Multiply by 25.4.  
 * Internal state is **always** millimeters.
 
-Application Implementation Specification \- PCB Renderer CLI.mdJan 28, 3:31 PMTry again without Canvas
+Application Implementation Specification - PCB Renderer CLI.mdJan 28, 3:31 PMTry again without Canvas
