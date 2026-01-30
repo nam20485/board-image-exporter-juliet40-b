@@ -1,0 +1,120 @@
+{
+  "name": "test_board",
+  "designUnits": "INVALID_UNIT",
+  "boundary": {
+    "points": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        50.0,
+        50.0
+      ],
+      [
+        50.0,
+        0.0
+      ],
+      [
+        0.0,
+        50.0
+      ],
+      [
+        0.0,
+        0.0
+      ]
+    ]
+  },
+  "stackup": {
+    "layers": []
+  },
+  "components": {
+    "R1": {
+      "footprint": "RES_0805",
+      "position": {
+        "x": 100.0,
+        "y": 100.0
+      },
+      "rotation": "invalid",
+      "side": "FRONT",
+      "pins": {
+        "1": {
+          "net": "GND",
+          "position": {
+            "x": -1.0,
+            "y": 0.0
+          },
+          "rotation": 0.0,
+          "is_throughhole": false
+        }
+      },
+      "outline": {
+        "points": [
+          [
+            95.0,
+            95.0
+          ],
+          [
+            105.0,
+            95.0
+          ],
+          [
+            105.0,
+            105.0
+          ],
+          [
+            95.0,
+            105.0
+          ],
+          [
+            95.0,
+            95.0
+          ]
+        ]
+      }
+    }
+  },
+  "traces": {
+    "trace1": {
+      "net": "NONEXISTENT_NET",
+      "layer_hash": "nonexistent_layer",
+      "path": {
+        "points": [
+          [
+            10.0,
+            10.0
+          ],
+          [
+            20.0,
+            10.0
+          ],
+          [
+            20.0,
+            20.0
+          ]
+        ]
+      },
+      "width": -0.5
+    }
+  },
+  "vias": {
+    "via1": {
+      "net": "GND",
+      "center": {
+        "x": 25.0,
+        "y": 25.0
+      },
+      "outer_diameter": 0.8,
+      "hole_diameter": 1.0,
+      "start_layer": "top_layer_hash",
+      "end_layer": "top_layer_hash"
+    }
+  },
+  "pours": {},
+  "keepouts": [],
+  "nets": {
+    "GND": {
+      "name": "GND"
+    }
+  }
+}

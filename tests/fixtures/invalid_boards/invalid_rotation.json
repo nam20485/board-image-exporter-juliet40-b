@@ -1,0 +1,91 @@
+{
+  "name": "test_board",
+  "designUnits": "MILLIMETER",
+  "boundary": {
+    "points": [
+      [
+        0.0,
+        NaN
+      ],
+      [
+        50.0,
+        0.0
+      ],
+      [
+        50.0,
+        50.0
+      ],
+      [
+        0.0,
+        50.0
+      ],
+      [
+        0.0,
+        0.0
+      ]
+    ]
+  },
+  "stackup": {
+    "layers": [
+      {
+        "name": "TOP",
+        "type": "TOP",
+        "index": 0,
+        "hash": "top_layer_hash"
+      }
+    ]
+  },
+  "components": {
+    "R1": {
+      "footprint": "RES_0805",
+      "position": {
+        "x": 10.0,
+        "y": 10.0
+      },
+      "rotation": "invalid",
+      "side": "FRONT",
+      "pins": {
+        "1": {
+          "net": "GND",
+          "position": {
+            "x": -1.0,
+            "y": 0.0
+          },
+          "rotation": 0.0,
+          "is_throughhole": false
+        }
+      }
+    }
+  },
+  "traces": {
+    "trace1": {
+      "net": "GND",
+      "layer_hash": "top_layer_hash",
+      "path": {
+        "points": [
+          [
+            10.0,
+            10.0
+          ],
+          [
+            20.0,
+            10.0
+          ],
+          [
+            20.0,
+            20.0
+          ]
+        ]
+      },
+      "width": 0.2
+    }
+  },
+  "vias": {},
+  "pours": {},
+  "keepouts": [],
+  "nets": {
+    "GND": {
+      "name": "GND"
+    }
+  }
+}
