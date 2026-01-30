@@ -343,6 +343,16 @@ paket-files/
 **/__pycache__/
 *.pyc
 
+# Python packaging
+*.egg-info/
+src/*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environment (uv creates this)
+.venv/
+
 # Cake - Uncomment if you are using it
 #tools/**
 #!tools/packages.config

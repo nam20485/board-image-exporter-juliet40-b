@@ -260,15 +260,42 @@ The file I/O operations use safe path handling to prevent directory traversal at
 
 ## Deployment and Distribution
 
-The system is distributed as a Python package installable via pip or uv. The package structure includes a pyproject.toml with dependencies and metadata, a README with installation and usage instructions, a LICENSE file (MIT or similar permissive license), and tests and documentation in the repository but excluded from the package.
+The system is distributed as a Python package installable via uv (recommended) or pip. The package structure includes a pyproject.toml with dependencies and metadata, a README with installation and usage instructions, a LICENSE file (MIT or similar permissive license), and tests and documentation in the repository but excluded from the package.
 
-Installation is straightforward using uv with the commands uv pip install pcb-renderer to install from PyPI or uv pip install -e . to install in development mode from the local repository. For end users unfamiliar with Python, pre-built executables can be created using PyInstaller or similar tools, providing single-file executables for Windows, macOS, and Linux that include all dependencies and require no Python installation.
+Installation is straightforward using uv with the commands `uv pip install pcb-renderer` to install from PyPI or `uv sync --all-extras` to install in development mode from the local repository. For end users unfamiliar with Python, pre-built executables can be created using PyInstaller or similar tools, providing single-file executables for Windows, macOS, and Linux that include all dependencies and require no Python installation.
 
 ## Monitoring and Observability
 
 The system provides logging for troubleshooting and debugging. The logging configuration uses Python's standard logging module with levels DEBUG for detailed diagnostic information, INFO for normal operation messages, WARNING for recoverable issues, and ERROR for failures requiring user attention.
 
 Log output is formatted consistently with timestamp, level, module name, and message. For development, logs are written to stderr with color coding. For production use, logs can be directed to files with rotation based on size or time. The logging configuration can be controlled through environment variables or configuration files.
+
+## Change Log
+
+### 2026-01-30 - Package Manager Migration to UV
+
+**Changes Made:**
+- Migrated from pip to uv as the primary package manager
+- Created `pyproject.toml` with PEP 621 compliant project configuration
+- Generated `uv.lock` file for reproducible dependency installations
+- Updated `.gitignore` to exclude `*.egg-info/` and `.venv/` directories
+- Updated CI/CD workflows to use uv caching instead of pip caching
+- Created comprehensive `README.md` with uv-based installation instructions
+- Created `UV_MIGRATION.md` guide for team members
+
+**Rationale:**
+UV provides 10-100x faster dependency resolution and installation compared to pip, ensures reproducible builds through its lock file mechanism, and offers automatic virtual environment management. The migration aligns the project with modern Python packaging standards (PEP 621) and improves developer experience through simplified workflows.
+
+**Impact:**
+- **For End Users**: Installation command changes from `pip install pcb-renderer-cli` to `uv pip install pcb-renderer-cli`
+- **For Developers**: Setup simplified from manual venv creation + pip install to single `uv sync --all-extras` command
+- **For CI/CD**: Workflows updated to use `astral-sh/setup-uv@v4` action and uv caching
+- **Backwards Compatibility**: The `pyproject.toml` remains pip-compatible; users can still use pip if preferred
+
+**References:**
+- UV Documentation: https://docs.astral.sh/uv/
+- Migration Guide: [UV_MIGRATION.md](../UV_MIGRATION.md)
+- Package Configuration: [pyproject.toml](../pyproject.toml)
 
 ## Conclusion
 
