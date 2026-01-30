@@ -130,7 +130,7 @@ The PCB Renderer serves as a bridge between raw ECAD data and visual verificatio
   * pydantic \~= 2.0: Strict data parsing and schema validation.  
   * numpy \~= 1.26: Vectorized geometric transformations and matrix math.  
 * **CLI:**  
-  * argparse: Standard library (Zero-dependency preference for simpler review) OR typer (if modern DX is preferred). *Plan assumes standard library to minimize deps.*  
+  * **typer \~= 0.12** with rich console support: Selected for modern developer and user experience. Provides automatic type validation from Python type hints, rich console output with colors, built-in shell completion (bash/zsh/fish/PowerShell), and better error messages. <!-- CHANGED: 2026-01-30 by GitHub Copilot (nam20485) - Selected Typer over argparse for superior UX -->  
 * **Rendering:**  
   * matplotlib \~= 3.8: Robust, backend-agnostic 2D plotting engine for SVG/PDF/PNG generation.  
 * **Testing & QA:**  
@@ -216,3 +216,17 @@ As detailed in the Design Plan, the app will handle the designUnits field in met
 * Internal state is **always** millimeters.
 
 Application Implementation Specification \- PCB Renderer CLI.mdJan 28, 3:31 PMTry again without Canvas
+---
+
+## Document Changelog
+
+### 2026-01-30 - GitHub Copilot (nam20485)
+**Changed:** CLI Framework Selection - Typer selected over argparse  
+**Reason:** Project prioritizes modern user experience and developer productivity:
+- Automatic type validation from Python type hints (reduces validation boilerplate)
+- Rich console formatting with colors and styling (enhanced readability)
+- Built-in shell completion for all major shells (improved productivity)
+- Better error messages with context and suggestions
+- More maintainable code that reads like standard Python functions
+
+**Impact:** Enhanced end-user CLI experience and developer ergonomics. Added `typer[all]>=0.12.0` dependency. No changes to CLI command structure or behavior - all specified commands and options remain identical.
