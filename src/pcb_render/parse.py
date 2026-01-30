@@ -3,7 +3,7 @@ Parsing helpers for ECAD JSON inputs.
 """
 
 from pathlib import Path
-from typing import Any, Tuple
+from typing import Tuple
 
 from .models import BoardModel
 
