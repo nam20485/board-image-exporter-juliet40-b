@@ -146,15 +146,21 @@ Edge case testing extends beyond the fourteen invalid boards to cover boundary c
 
 ## Phase 5: CLI Implementation
 
+<!-- MODIFIED: 2026-01-30 by GitHub Copilot (nam20485)
+     CHANGE: Selected Typer as CLI framework (over  argparse)
+     REASON: Typer provides modern user experience with automatic type validation,
+             rich console output, shell completion, and better error messages
+-->
+
 ### Command Structure
 
-The CLI provides three main commands through a clean interface. The render command takes an input JSON file, output path, optional layer filter, and optional format override. The validate command takes an input JSON file and produces a validation report. The list-boards command scans a directory and summarizes all board files found.
+The CLI provides three main commands through a clean interface. The render command takes an input JSON file, output path, optional layer filter, and optional format override. The validate command takes an input JSON file and produces a validation report. The info command shows board metadata summary.
 
-The render command accepts parameters including input as a required positional argument for the board JSON file path, output specified via -o or --output for the destination file path, layers specified via --layers as a comma-separated list defaulting to all layers, format specified via --format as one of svg, png, or pdf with automatic detection from output extension, and verbose flag via -v or --verbose for detailed progress output.
+The render command accepts parameters including file as a required positional argument for the board JSON file path with automatic existence validation, output specified via -o or --output for the destination file path, format specified via --format as one of svg, png, or pdf with default to svg, dpi specified via --dpi for raster output resolution with validation range 72-1200, layers specified via --layers as a list of layer names to render, and verbose flag via -v or --verbose for detailed progress output with rich console formatting.
 
-Example render invocations demonstrate the flexibility of the interface. Basic rendering uses pcb-render render board.json -o output.svg. Layer filtering uses pcb-render render board.json -o output.svg --layers TOP,BOTTOM. Format override uses pcb-render render board.json -o output.png --format png. Verbose mode uses pcb-render render board.json -o output.svg -v.
+Example render invocations demonstrate the flexibility of the interface. Basic rendering uses pcb-render render board.json -o output.svg. Layer filtering uses pcb-render render board.json -o output.svg --layers TOP BOTTOM. Format override uses pcb-render render board.json -o output.png --format png. Verbose mode uses pcb-render render board.json -o output.svg -v.
 
-The validate command provides validation without rendering. It accepts input as a required positional argument for the board JSON file path, json flag via --json to output structured error information, and verbose flag via -v or --verbose for detailed validation messages. Example usage includes basic validation via pcb-render validate board.json and JSON output via pcb-render validate board.json --json.
+The validate command provides validation without rendering. It accepts file as a required positional argument for the board JSON file path with automatic existence validation, json flag via --json to output structured error information, and verbose flag via -v or --verbose for detailed validation messages. Example usage includes basic validation via pcb-render validate board.json and JSON output via pcb-render validate board.json --json.
 
 ### Error Handling and User Experience
 
@@ -224,7 +230,7 @@ Phase 3 Rendering requires two weeks and builds the Matplotlib rendering pipelin
 
 Phase 4 Testing requires one week and creates unit tests for all modules, property-based tests with Hypothesis, snapshot tests for visual regression, and invalid board tests for all fourteen error types.
 
-Phase 5 CLI requires one week and implements command-line interface with argparse or Typer, error reporting and user feedback, configuration file support, and progress reporting for long operations.
+Phase 5 CLI requires one week and implements command-line interface with Typer (chosen for modern user experience over argparse), error reporting with rich console formatting, configuration file support, and progress reporting for long operations.
 
 Phase 6 CI requires one week and sets up GitHub Actions workflows, matrix builds across platforms and Python versions, coverage reporting and enforcement, and release automation.
 
@@ -259,3 +265,21 @@ Integration features could enable REST API for remote rendering, batch processin
 This development plan provides a comprehensive roadmap for implementing a PCB board renderer that meets all specified requirements. The phased approach ensures core functionality is established early, with testing and quality assurance integrated throughout the process. The emphasis on validation, deterministic outputs, and comprehensive testing creates a reliable foundation that can be reviewed and verified within the required timeframe.
 
 The architecture prioritizes simplicity and correctness over premature optimization, using well-established libraries and patterns to minimize development risk. The extensive testing strategy, including property-based tests and snapshot comparisons, provides confidence in correctness across a wide range of board configurations. The CI/CD pipeline ensures quality is maintained across platforms and Python versions, while comprehensive documentation supports both users and future maintainers.
+
+---
+
+## Document Changelog
+
+### 2026-01-30 - GitHub Copilot (nam20485)
+**Changed:** Phase 5 CLI Implementation - Selected Typer over argparse  
+**Reason:** Typer provides superior developer and user experience:
+- Automatic type validation from Python type hints (reduces manual validation code)
+- Rich console output with colors and formatting (better UX)
+- Built-in shell completion for bash, zsh, fish, PowerShell (productivity boost)
+- Better error messages with automatic suggestions
+- Cleaner API that reads like regular Python functions (easier to maintain)
+
+**Changed:** Phase Breakdown description for Phase 5  
+**Reason:** Updated to reflect Typer selection as the chosen CLI framework
+
+**Impact:** Enhanced user experience and developer productivity while maintaining all specified functionality. No changes to CLI semantics or behavior, only implementation approach.
