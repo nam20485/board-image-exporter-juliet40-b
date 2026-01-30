@@ -1,213 +1,181 @@
 # PCB Renderer CLI
 
-CLI tool to parse, validate, and render PCB ECAD JSON inputs with visual outputs (SVG/PNG/PDF).
+A lightweight, high-performance Command Line Interface tool for parsing ECAD JSON files and rendering them into accurate visual representations (SVG, PNG, PDF).
 
-## Features
+## Overview
 
-- Parse and validate ECAD JSON board descriptions
-- Geometry and topology validation engine
-- Multi-format rendering (SVG, PNG, PDF)
-- Property-based testing with Hypothesis
-- Snapshot testing for visual regression
+The PCB Renderer serves as a bridge between raw ECAD data and visual verification. It ingests JSON board definitions, performs rigorous validation, and produces layered visual outputs. The tool focuses on geometric correctness, handling complex coordinate transformations, and validating board integrity against strict rules.
+
+**Current Status**: Phase 1 Foundation Complete ✅
+
+### Phase 1 Features
+- ✅ Parse ECAD JSON board definitions
+- ✅ Normalize coordinates from multiple units (MICRON, MILLIMETER, MILS, INCH) to millimeters
+- ✅ Validate boards against 14 error classes
+- ✅ Support for components, traces, vias, layers, and keepouts
+- ✅ Comprehensive test coverage (93%)
+
+### Planned Features (Phases 2-5)
+- ⏳ Geometric transformations (rotation, translation, mirroring)
+- ⏳ Rendering to SVG, PNG, PDF
+- ⏳ Visual regression testing
+- ⏳ CLI commands (render, validate, info)
 
 ## Installation
 
-### From PyPI (when published)
+### Prerequisites
+- Python 3.11 or higher
+- [uv](https://github.com/astral-sh/uv) package manager
 
-```bash
-uv pip install pcb-renderer-cli
-```
-
-### From Source (Development)
+### Setup
 
 ```bash
 # Clone the repository
 git clone https://github.com/nam20485/board-image-exporter-juliet40-b.git
 cd board-image-exporter-juliet40-b
 
-# Install with uv (creates .venv automatically)
+# Install dependencies
 uv sync --all-extras
 
-# Activate virtual environment
-# On Windows
-.venv\Scripts\Activate.ps1
-# On Linux/Mac
-source .venv/bin/activate
+# Verify installation
+uv run pytest --version
 ```
 
-## Usage
+## Quick Start
 
 ```bash
-# Basic usage
-pcb-render input.json --output board.svg
+# Run tests
+uv run pytest
 
-# Specify output format
-pcb-render input.json --output board.png --format png
+# Run with coverage
+uv run pytest --cov=pcb_render --cov-report=html
 
-# Run with validation only
-pcb-render input.json --validate-only
+# Lint code
+uv run ruff check .
 
-# Show help
-pcb-render --help
+# Format code
+uv run ruff format .
+
+# Type check
+uv run pyright
+```
+
+## Project Structure
+
+```
+.
+├── src/
+│   └── pcb_render/
+│       ├── __init__.py       # Package metadata
+│       ├── models.py         # Pydantic models (Point, Polygon, Board, etc.)
+│       ├── units.py          # Unit conversion utilities
+│       ├── parse.py          # JSON parsing and normalization
+│       ├── validate.py       # Validation engine
+│       └── errors.py         # Error definitions
+├── tests/
+│   ├── fixtures/             # Valid board JSON files
+│   │   ├── minimal_board.json
+│   │   └── complex_board.json
+│   ├── invalid_boards/       # Invalid boards for testing (14 files)
+│   ├── test_models.py        # Model tests
+│   ├── test_units.py         # Unit conversion tests
+│   ├── test_parse.py         # Parsing tests
+│   └── test_validate.py      # Validation tests
+├── docs/
+│   ├── error_reference.md    # All 14 error codes documented
+│   └── developer_guide.md    # Architecture and contribution guide
+├── pyproject.toml            # Project configuration
+├── uv.lock                   # Locked dependencies
+└── README.md
 ```
 
 ## Development
 
-### Setup
-
-1. **Install uv** (if not already installed):
-   ```bash
-   # Windows (PowerShell)
-   irm https://astral.sh/uv/install.ps1 | iex
-   
-   # Linux/Mac
-   curl -LsSf https://astral.sh/uv/install.sh | sh
-   ```
-
-2. **Clone and install dependencies**:
-   ```bash
-   git clone https://github.com/nam20485/board-image-exporter-juliet40-b.git
-   cd board-image-exporter-juliet40-b
-   uv sync --all-extras
-   ```
-
-3. **Run tests**:
-   ```bash
-   uv run pytest
-   ```
-
-4. **Run linting**:
-   ```bash
-   uv run ruff check src/ tests/
-   ```
-
-5. **Format code**:
-   ```bash
-   uv run ruff format src/ tests/
-   ```
-
-### Project Structure
-
-```
-board-image-exporter-juliet40-b/
-├── src/
-│   ├── pcb_render/       # Main package
-│   │   ├── cli.py        # CLI entry point
-│   │   ├── models.py     # Pydantic models
-│   │   ├── geometry.py   # Geometry validation
-│   │   └── renderer.py   # Rendering engine
-│   └── llm_assistor/     # LLM validation tools
-├── tests/
-│   ├── fixtures/         # Test data
-│   ├── invalid_boards/   # Invalid board scenarios
-│   └── snapshots/        # Visual regression snapshots
-├── pyproject.toml        # Project configuration
-├── README.md             # This file
-└── uv.lock              # Dependency lock file (generated)
-```
-
-### Running with uv
-
-```bash
-# Run CLI directly
-uv run pcb-render input.json
-
-# Run tests with coverage
-uv run pytest --cov=pcb_render
-
-# Install in editable mode (for active development)
-uv pip install -e .
-
-# Add a new dependency
-uv add requests
-
-# Add a dev dependency
-uv add --dev black
-```
-
-### Creating a Release
-
-```bash
-# Build package
-uv build
-
-# Publish to PyPI (requires PyPI credentials)
-uv publish
-```
-
-## Testing
-
-The project includes comprehensive test coverage:
-
-- **Unit tests**: Individual component validation
-- **Integration tests**: End-to-end rendering pipeline
-- **Property-based tests**: Hypothesis for edge cases
-- **Snapshot tests**: Visual regression with Syrupy
+### Running Tests
 
 ```bash
 # Run all tests
 uv run pytest
 
-# Run with coverage report
-uv run pytest --cov=pcb_render --cov-report=html
-
 # Run specific test file
-uv run pytest tests/test_geometry.py
+uv run pytest tests/test_models.py
 
 # Run with verbose output
 uv run pytest -v
+
+# Run with coverage
+uv run pytest --cov=pcb_render --cov-report=term-missing
 ```
 
-## Validation Scenarios
+### Code Quality
 
-The tool validates 14 common PCB design errors:
+```bash
+# Lint
+uv run ruff check .
 
-1. Overlapping traces (same layer)
-2. Drill holes outside board boundary
-3. Insufficient trace spacing
-4. Missing copper on signal layers
-5. Invalid unit specifications
-6. Topology violations
-7. And more...
+# Format
+uv run ruff format .
+
+# Type check
+uv run pyright
+```
+
+## Phase 1 Status
+
+### Completed ✅
+- [x] Project structure and configuration
+- [x] Geometric primitive models (Point, Polygon, Polyline, Circle)
+- [x] Domain models (Board, Component, Trace, Via, Layer, Stackup)
+- [x] Unit normalization (4 unit types → millimeters)
+- [x] JSON parsing with coordinate normalization
+- [x] Validation framework (14 error classes)
+- [x] Comprehensive test suite (98 tests, 93% coverage)
+- [x] Test fixtures (2 valid + 14 invalid boards)
+- [x] CI/CD pipeline (GitHub Actions)
+
+### Test Coverage
+- **Overall**: 93% (exceeds 90% target)
+- **models.py**: 93%
+- **units.py**: 100%
+- **parse.py**: 96%
+- **validate.py**: 85%
+- **errors.py**: 95%
+
+### Error Classes Supported
+1. E001: Missing boundary
+2. E002: Malformed coordinates (NaN/Infinity)
+3. E003: Invalid rotation
+4. E004: Negative width
+5. E005: Invalid via geometry
+6. E006: Nonexistent layer
+7. E007: Nonexistent net
+8. E008: Self-intersecting boundary
+9. E009: Component outside boundary
+10. E010: Duplicate layer hash
+11. E011: Non-sequential layer indices
+12. E012: Empty stackup
+13. E013: Invalid design units
+14. E014: Negative diameter
+
+See [docs/error_reference.md](docs/error_reference.md) for detailed descriptions.
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Run tests (`uv run pytest`)
-5. Commit your changes (`git commit -m 'Add amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
-
-## Requirements
-
-- Python 3.11 or higher
-- uv package manager (recommended) or pip
+See [docs/developer_guide.md](docs/developer_guide.md) for:
+- Architecture overview
+- Adding new models
+- Adding validation rules
+- Running tests
+- Code style guidelines
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
-
-## Roadmap
-
-- [ ] Implement core validation engine
-- [ ] Add SVG rendering
-- [ ] Add PNG/PDF export
-- [ ] Property-based test suite
-- [ ] Docker containerization
-- [ ] CI/CD pipeline
-- [ ] PyPI publication
-
-## Support
-
-For issues, questions, or contributions:
-- Open an issue: https://github.com/nam20485/board-image-exporter-juliet40-b/issues
-- Read the docs: https://github.com/nam20485/board-image-exporter-juliet40-b/wiki
+See [LICENSE.md](LICENSE.md) for details.
 
 ## Acknowledgments
 
-- Built with [Pydantic](https://pydantic.dev/) for data validation
-- Rendering powered by [Matplotlib](https://matplotlib.org/)
-- CLI built with [Typer](https://typer.tiangolo.com/)
-- Package management with [uv](https://github.com/astral-sh/uv)
+Built with:
+- [Pydantic](https://docs.pydantic.dev/) for data modeling
+- [pytest](https://docs.pytest.org/) for testing
+- [uv](https://github.com/astral-sh/uv) for package management
+- [ruff](https://docs.astral.sh/ruff/) for linting and formatting
