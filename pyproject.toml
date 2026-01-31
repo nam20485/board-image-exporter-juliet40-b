@@ -23,6 +23,7 @@ classifiers = [
 ]
 
 dependencies = [
+    # Reserved for Phase 2: Pydantic will be used for model/config validation in the CLI layer.
     "pydantic~=2.0",
     "numpy~=1.26",
     "matplotlib~=3.8",
@@ -34,16 +35,16 @@ dev = [
     "hypothesis>=6.0",
     "syrupy>=4.0",
     "ruff>=0.1.0",
-    "pyright>=1.1.0",
+    "basedpyright>=1.1.0",
     "pytest-cov>=4.0",
 ]
 
 # [project.scripts]
-# CLI module not yet implemented - reserved for Phase 2
+# CLI module not yet implem ented - reserved for Phase 2
 # pcb-render = "pcb_render.cli:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/pcb_render"]
+packages = ["src/pcb_render", "src/llm_assistor"]
 
 [tool.ruff]
 line-length = 100
@@ -87,7 +88,7 @@ markers = [
     "integration: marks tests as integration tests",
 ]
 
-[tool.pyright]
+[tool.basedpyright]
 include = ["src"]
 pythonVersion = "3.11"
 typeCheckingMode = "strict"
@@ -96,3 +97,8 @@ reportMissingTypeStubs = "error"
 reportUnknownMemberType = "error"
 reportUnknownVariableType = "error"
 reportUnknownParameterType = "error"
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.37.2",
+]
