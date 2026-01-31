@@ -183,8 +183,9 @@ def suggest_patch(errors: list[ValidationError], board: dict[str, Any]) -> list[
             current_via: dict[str, Any] = board
             found_via = True
             try:
+                p: str
                 for p in parts:
-                    next_value = current_via.get(p)
+                    next_value: Any = current_via.get(p)
                     if not isinstance(next_value, dict):
                         found_via = False
                         break

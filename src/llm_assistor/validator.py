@@ -72,6 +72,8 @@ def validate_board(board: dict[str, Any]) -> list[ValidationError]:
         for trace_name, trace in typed_traces.items():
             if isinstance(trace, dict):
                 traces[trace_name] = cast(dict[str, Any], trace)
+    trace_name: str
+    trace: dict[str, Any]
     for trace_name, trace in traces.items():
         width = trace.get("width")
         if width is None:
@@ -117,7 +119,7 @@ def validate_board(board: dict[str, Any]) -> list[ValidationError]:
                     }
                 )
             else:
-                coord_seq = cast(Sequence[Any], coord)
+                coord_seq: Sequence[Any] = cast(Sequence[Any], coord)
                 if len(coord_seq) != 2:
                     errors.append(
                         {
@@ -131,7 +133,9 @@ def validate_board(board: dict[str, Any]) -> list[ValidationError]:
                     )
                 else:
                     # Check that both coordinates are numeric
-                    x, y = coord_seq[0], coord_seq[1]
+                    x: Any = coord_seq[0]
+                    y: Any = coord_seq[1]
+                    c: Any
                     if not all(isinstance(c, (int, float)) for c in (x, y)):
                         errors.append(
                             {
@@ -153,6 +157,8 @@ def validate_board(board: dict[str, Any]) -> list[ValidationError]:
         for via_name, via in typed_vias.items():
             if isinstance(via, dict):
                 vias[via_name] = cast(dict[str, Any], via)
+    via_name: str
+    via: dict[str, Any]
     for via_name, via in vias.items():
         diameter = via.get("diameter")
         hole = via.get("hole")
