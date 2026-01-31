@@ -28,7 +28,7 @@ Each error is returned as a dictionary with the following keys:
 """
 
 import json
-from typing import Any, TypedDict, TypeGuard, cast
+from typing import Any, Sequence, TypedDict, cast
 
 
 class ValidationError(TypedDict):
@@ -40,20 +40,7 @@ class ValidationError(TypedDict):
     severity: str
 
 
-def _coerce_mapping(value: object) -> dict[str, dict[str, Any]]:
-    if not isinstance(value, dict):
-        return {}
-    result: dict[str, dict[str, Any]] = {}
-    for key, item in value.items():
-        if isinstance(key, str) and isinstance(item, dict):
-            result[key] = cast(dict[str, Any], item)
-    return result
 
-
-def _is_coord_pair(value: object) -> TypeGuard[tuple[float, float] | list[float]]:
-    if not isinstance(value, (list, tuple)) or len(value) != 2:
-        return False
-    return all(isinstance(item, (int, float)) for item in value)
 
 
 def validate_board(board: dict[str, Any]) -> list[ValidationError]:
@@ -80,12 +67,13 @@ def validate_board(board: dict[str, Any]) -> list[ValidationError]:
         )
 
     # Validate traces
-    raw_traces = board.get("traces", {})
+    raw_traces = board.get("traces")
     traces: dict[str, dict[str, Any]] = {}
     if isinstance(raw_traces, dict):
-        for trace_name, trace in raw_traces.items():
-            if isinstance(trace_name, str) and isinstance(trace, dict):
-                traces[trace_name] = trace
+        typed_traces = cast(dict[str, Any], raw_traces)
+        for trace_name, trace in typed_traces.items():
+            if isinstance(trace, dict):
+                traces[trace_name] = cast(dict[str, Any], trace)
     for trace_name, trace in traces.items():
         width = trace.get("width")
         if width is None:
@@ -119,7 +107,7 @@ def validate_board(board: dict[str, Any]) -> list[ValidationError]:
         # Validate start and end coordinates
         for coord_name in ["start", "end"]:
             coord = trace.get(coord_name)
-            if not isinstance(coord, (list, tuple)) or len(coord) != 2:
+            if not isinstance(coord, (list, tuple)):
                 errors.append(
                     {
                         "code": f"trace.{coord_name}.invalid",
@@ -130,14 +118,42 @@ def validate_board(board: dict[str, Any]) -> list[ValidationError]:
                         "severity": "error",
                     }
                 )
+            else:
+                coord_seq = cast(Sequence[Any], coord)
+                if len(coord_seq) != 2:
+                    errors.append(
+                        {
+                            "code": f"trace.{coord_name}.invalid",
+                            "message": (
+                                f"Trace '{trace_name}' {coord_name} must be a two‑element list."
+                            ),
+                            "json_path": f"/traces/{trace_name}/{coord_name}",
+                            "severity": "error",
+                        }
+                    )
+                else:
+                    # Check that both coordinates are numeric
+                    x, y = coord_seq[0], coord_seq[1]
+                    if not all(isinstance(c, (int, float)) for c in (x, y)):
+                        errors.append(
+                            {
+                                "code": f"trace.{coord_name}.coordinates.type",
+                                "message": (
+                                    f"Trace '{trace_name}' {coord_name} coordinates must be numeric."
+                                ),
+                                "json_path": f"/traces/{trace_name}/{coord_name}",
+                                "severity": "error",
+                            }
+                        )
 
     # Validate vias
-    raw_vias = board.get("vias", {})
+    raw_vias = board.get("vias")
     vias: dict[str, dict[str, Any]] = {}
     if isinstance(raw_vias, dict):
-        for via_name, via in raw_vias.items():
-            if isinstance(via_name, str) and isinstance(via, dict):
-                vias[via_name] = via
+        typed_vias = cast(dict[str, Any], raw_vias)
+        for via_name, via in typed_vias.items():
+            if isinstance(via, dict):
+                vias[via_name] = cast(dict[str, Any], via)
     for via_name, via in vias.items():
         diameter = via.get("diameter")
         hole = via.get("hole")
