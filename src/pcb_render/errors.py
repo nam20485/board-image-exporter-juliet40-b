@@ -38,7 +38,9 @@ _ERROR_MESSAGES = {
     E001_MISSING_BOUNDARY: {
         "severity": ErrorSeverity.ERROR,
         "message": "Board boundary is missing or undefined",
-        "suggestion": "Add a 'boundary' field with a polygon containing at least 3 coordinate pairs",
+        "suggestion": (
+            "Add a 'boundary' field with a polygon containing at least 3 coordinate pairs"
+        ),
     },
     E001_BOUNDARY_NOT_CLOSED: {
         "severity": ErrorSeverity.ERROR,

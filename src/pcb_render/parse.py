@@ -159,7 +159,7 @@ def _parse_stackup(stackup_data: dict[str, Any]) -> Stackup:
             raise ValueError(
                 f"Invalid layer type '{layer_type_str}'. "
                 f"Must be one of: {[lt.name for lt in LayerType]}"
-            )
+            ) from None
 
         layer = Layer(
             name=layer_data.get("name", ""),
@@ -191,7 +191,9 @@ def _parse_components(
     for ref_des, comp_data in components_data.items():
         # Parse position
         pos_data = comp_data.get("position", {})
-        normalized_pos = normalize_coordinates([pos_data.get("x", 0), pos_data.get("y", 0)], design_units)
+        normalized_pos = normalize_coordinates(
+            [pos_data.get("x", 0), pos_data.get("y", 0)], design_units
+        )
         position = Point(normalized_pos[0], normalized_pos[1])
 
         # Parse side
@@ -201,7 +203,7 @@ def _parse_components(
         except KeyError:
             raise ValueError(
                 f"Invalid component side '{side_str}'. Must be FRONT or BACK"
-            )
+            ) from None
 
         # Parse rotation
         rotation = comp_data.get("rotation", 0.0)
@@ -233,7 +235,11 @@ def _parse_components(
                 name=pin_name,
                 net=pin_data.get("net"),
                 position=pin_position,
-                rotation=pin_data.get("rotation", 0.0) if isinstance(pin_data.get("rotation", 0.0), (int, float)) else 0.0,
+                rotation=(
+                    pin_data.get("rotation", 0.0)
+                    if isinstance(pin_data.get("rotation", 0.0), (int, float))
+                    else 0.0
+                ),
                 is_throughhole=pin_data.get("is_throughhole", False),
             )
             pins[pin_name] = pin

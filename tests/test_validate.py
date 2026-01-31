@@ -1,7 +1,5 @@
 """Tests for board validation."""
 
-from pcb_render.parse import parse_board
-from pcb_render.validate import validate_board
 from pcb_render.errors import (
     E001_MISSING_BOUNDARY,
     E002_MALFORMED_COORDINATES,
@@ -18,6 +16,8 @@ from pcb_render.errors import (
     E013_INVALID_DESIGN_UNITS,
     E014_NEGATIVE_DIAMETER,
 )
+from pcb_render.parse import parse_board
+from pcb_render.validate import validate_board
 
 
 class TestValidateBoard:
@@ -184,7 +184,7 @@ class TestValidationEdgeCases:
 
     def test_error_severity_levels(self):
         """Test that errors have appropriate severity levels."""
-        from pcb_render.errors import ValidationError, ErrorSeverity
+        from pcb_render.errors import ErrorSeverity, ValidationError
 
         # E006 should be ERROR severity
         error = ValidationError.from_code(E006_NONEXISTENT_LAYER)

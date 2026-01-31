@@ -28,10 +28,10 @@ Each error is returned as a dictionary with the following keys:
 """
 
 import json
-from typing import Any, Dict, List
+from typing import Any
 
 
-class ValidationError(Dict[str, Any]):
+class ValidationError(dict[str, Any]):
     """A dict subclass to hold structured validation error information."""
     code: str
     message: str
@@ -39,7 +39,7 @@ class ValidationError(Dict[str, Any]):
     severity: str
 
 
-def validate_board(board: Dict[str, Any]) -> List[ValidationError]:
+def validate_board(board: dict[str, Any]) -> list[ValidationError]:
     """Validate a board dictionary and return a list of validation errors.
 
     Args:
@@ -48,7 +48,7 @@ def validate_board(board: Dict[str, Any]) -> List[ValidationError]:
     Returns:
         A list of ValidationError dictionaries.
     """
-    errors: List[ValidationError] = []
+    errors: list[ValidationError] = []
 
     # Validate top‑level keys
     units = board.get("units")
@@ -136,7 +136,10 @@ def validate_board(board: Dict[str, Any]) -> List[ValidationError]:
             errors.append(
                 ValidationError(
                     code="via.dimensions.negative",
-                    message=f"Via '{via_name}' has non‑positive diameter ({diameter}) or hole ({hole}).",
+                    message=(
+                        f"Via '{via_name}' has non‑positive diameter ({diameter}) "
+                        f"or hole ({hole})."
+                    ),
                     json_path=f"/vias/{via_name}",
                     severity="error",
                 )
@@ -146,7 +149,10 @@ def validate_board(board: Dict[str, Any]) -> List[ValidationError]:
             errors.append(
                 ValidationError(
                     code="via.hole.exceeds_diameter",
-                    message=f"Via '{via_name}' hole {hole} is greater than or equal to diameter {diameter}.",
+                    message=(
+                        f"Via '{via_name}' hole {hole} is greater than or equal to "
+                        f"diameter {diameter}."
+                    ),
                     json_path=f"/vias/{via_name}",
                     severity="error",
                 )
@@ -155,7 +161,7 @@ def validate_board(board: Dict[str, Any]) -> List[ValidationError]:
     return errors
 
 
-def load_board(path: str) -> Dict[str, Any]:
+def load_board(path: str) -> dict[str, Any]:
     """Load a board JSON file from disk.
 
     Args:
@@ -168,11 +174,11 @@ def load_board(path: str) -> Dict[str, Any]:
         FileNotFoundError: If the file does not exist.
         json.JSONDecodeError: If the file is not valid JSON.
     """
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
-def save_board(board: Dict[str, Any], path: str) -> None:
+def save_board(board: dict[str, Any], path: str) -> None:
     """Save a board dictionary to disk as JSON.
 
     Args:

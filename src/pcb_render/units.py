@@ -8,7 +8,6 @@ the PCB renderer.
 
 from typing import Any
 
-
 # Conversion factors to millimeters
 _CONVERSION_FACTORS = {
     "MICRON": 0.001,

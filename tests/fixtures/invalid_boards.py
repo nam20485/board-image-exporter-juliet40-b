@@ -69,7 +69,13 @@ def create_invalid_boards():
 
     # E002: Malformed coordinates (infinity values that pass parsing but fail validation)
     board_e002 = json.loads(json.dumps(VALID_BOARD))  # Deep copy
-    board_e002["boundary"]["points"] = [[0.0, 1e308], [50.0, 0.0], [50.0, 50.0], [0.0, 50.0], [0.0, 0.0]]
+    board_e002["boundary"]["points"] = [
+        [0.0, 1e308],
+        [50.0, 0.0],
+        [50.0, 50.0],
+        [0.0, 50.0],
+        [0.0, 0.0],
+    ]
     save_invalid_board(board_e002, output_dir / "malformed_coordinates.json")
 
     # E003: Invalid rotation (extreme value that's technically valid but unreasonable)

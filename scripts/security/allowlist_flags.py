@@ -3,18 +3,16 @@
 from __future__ import annotations
 
 import argparse
-import os
 from pathlib import Path
-from typing import List, Tuple
 
 
-def parse_allowlist(path: Path) -> Tuple[List[str], List[str]]:
+def parse_allowlist(path: Path) -> tuple[list[str], list[str]]:
     if not path.exists():
         return [], []
 
     current = None
-    paths: List[str] = []
-    detectors: List[str] = []
+    paths: list[str] = []
+    detectors: list[str] = []
 
     for raw_line in path.read_text(encoding="utf-8").splitlines():
         line = raw_line.strip()

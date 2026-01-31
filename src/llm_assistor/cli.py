@@ -34,10 +34,10 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
-import validator
 import llm_assistant
+import validator
 
 
 def print_error(err: validator.ValidationError) -> None:
@@ -45,7 +45,7 @@ def print_error(err: validator.ValidationError) -> None:
     print(f"[error] {err['code']} at {err['json_path']}: {err['message']}")
 
 
-def print_explanation(expl: Dict[str, Any]) -> None:
+def print_explanation(expl: dict[str, Any]) -> None:
     """Pretty print a LLM explanation for a validation error."""
     print(f"\nExplanation for {expl['code']}:")
     print(f"  Summary: {expl['summary']}")
@@ -95,7 +95,7 @@ def command_validate(args: argparse.Namespace) -> int:
             print_explanation(expl)
 
     # Fix suggestions
-    patch_ops: Optional[List[Dict[str, Any]]] = None
+    patch_ops: list[dict[str, Any]] | None = None
     if args.fix_suggest and errors:
         patch_ops = llm_assistant.suggest_patch(errors, board)
         if patch_ops:
@@ -119,7 +119,7 @@ def command_validate(args: argparse.Namespace) -> int:
     return 0
 
 
-def apply_patch(board: Dict[str, Any], patch_ops: List[Dict[str, Any]]) -> Dict[str, Any]:
+def apply_patch(board: dict[str, Any], patch_ops: list[dict[str, Any]]) -> dict[str, Any]:
     """Apply a list of JSON patch operations to a board dictionary.
 
     This implementation supports only the 'replace' operation and does not
@@ -166,7 +166,7 @@ def command_apply_fix(args: argparse.Namespace) -> int:
 
     # Load patch
     try:
-        with open(patch_path, "r", encoding="utf-8") as f:
+        with open(patch_path, encoding="utf-8") as f:
             patch_ops = json.load(f)
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"Error: failed to load patch: {e}", file=sys.stderr)
@@ -197,7 +197,9 @@ def build_parser() -> argparse.ArgumentParser:
     validate_parser = subparsers.add_parser("validate", help="Validate a board file")
     validate_parser.add_argument("board", help="Path to the board JSON file")
     validate_parser.add_argument(
-        "--explain", action="store_true", help="Generate natural language explanations via local LLM"
+        "--explain",
+        action="store_true",
+        help="Generate natural language explanations via local LLM",
     )
     validate_parser.add_argument(
         "--fix-suggest",
@@ -222,14 +224,17 @@ def build_parser() -> argparse.ArgumentParser:
     apply_parser.add_argument("board", help="Path to the input board JSON file")
     apply_parser.add_argument("--patch", required=True, help="Path to JSON patch file")
     apply_parser.add_argument(
-        "-o", "--output", metavar="OUT", help="Path to write the patched board (defaults to overwrite)"
+        "-o",
+        "--output",
+        metavar="OUT",
+        help="Path to write the patched board (defaults to overwrite)",
     )
     apply_parser.set_defaults(func=command_apply_fix)
 
     return parser
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     return args.func(args)

@@ -21,7 +21,7 @@ required.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Protocol
+from typing import Any, Protocol
 
 from validator import ValidationError
 
@@ -33,7 +33,7 @@ class LlmEngine(Protocol):
     system prompt and a user prompt and returns a Python dictionary.
     """
 
-    def generate_json(self, system_prompt: str, user_prompt: str) -> Dict[str, Any]:
+    def generate_json(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
         ...  # pragma: no cover
 
 
@@ -44,7 +44,7 @@ class NoopEngine:
     empty dictionary which the caller must interpret accordingly.
     """
 
-    def generate_json(self, system_prompt: str, user_prompt: str) -> Dict[str, Any]:
+    def generate_json(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
         return {}
 
 
@@ -57,7 +57,7 @@ class OnnxRuntimeEngine:
     returns a deterministic explanation for demonstration purposes.
     """
 
-    def __init__(self, model_path: Optional[str] = None):
+    def __init__(self, model_path: str | None = None):
         self.model_path = model_path
         try:
             import onnxruntime as ort  # type: ignore
@@ -66,7 +66,7 @@ class OnnxRuntimeEngine:
             # We cannot import ONNX Runtime in this environment; fall back
             self.ort = None
 
-    def generate_json(self, system_prompt: str, user_prompt: str) -> Dict[str, Any]:
+    def generate_json(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
         """Generate a JSON response for the given prompts.
 
         Args:
@@ -84,7 +84,9 @@ class OnnxRuntimeEngine:
         # through the ONNX model session. Here we simulate a response.
         return {
             "summary": "Validation errors were detected in the board design.",
-            "likely_cause": "Some fields contain invalid numeric values or violate design constraints.",
+            "likely_cause": (
+                "Some fields contain invalid numeric values or violate design constraints."
+            ),
             "fix_steps": [
                 "Review each error and ensure numeric fields are positive.",
                 "Adjust via hole sizes so they are smaller than their diameters.",
@@ -96,12 +98,17 @@ class OnnxRuntimeEngine:
         }
 
 
-def explain_errors(errors: List[ValidationError], board_info: Optional[Dict[str, Any]] = None, engine: Optional[LlmEngine] = None) -> List[Dict[str, Any]]:
+def explain_errors(
+    errors: list[ValidationError],
+    board_info: dict[str, Any] | None = None,
+    engine: LlmEngine | None = None,
+) -> list[dict[str, Any]]:
     """Generate explanations for a list of validation errors.
 
     Args:
         errors: A list of ValidationError objects produced by `validator.validate_board`.
-        board_info: Optional dictionary with additional board metadata (unused here but kept for future use).
+        board_info: Optional dictionary with additional board metadata "
+        "(unused here but kept for future use).
         engine: An LlmEngine to produce the explanation. If None, defaults to OnnxRuntimeEngine.
 
     Returns:
@@ -111,7 +118,7 @@ def explain_errors(errors: List[ValidationError], board_info: Optional[Dict[str,
     if engine is None:
         engine = OnnxRuntimeEngine()
 
-    explanations: List[Dict[str, Any]] = []
+    explanations: list[dict[str, Any]] = []
     for err in errors:
         # Construct a specific user prompt for each error
         user_prompt = (
@@ -142,7 +149,7 @@ def explain_errors(errors: List[ValidationError], board_info: Optional[Dict[str,
     return explanations
 
 
-def suggest_patch(errors: List[ValidationError], board: Dict[str, Any]) -> List[Dict[str, Any]]:
+def suggest_patch(errors: list[ValidationError], board: dict[str, Any]) -> list[dict[str, Any]]:
     """Heuristically suggest a list of JSON patch operations to fix errors.
 
     This function does not use an LLM. Instead, it encodes a small set of
@@ -156,7 +163,7 @@ def suggest_patch(errors: List[ValidationError], board: Dict[str, Any]) -> List[
     Returns:
         A list of JSON patch operations (RFC6902) that may fix some errors.
     """
-    patch_ops: Dict[str, Dict[str, Any]] = {}
+    patch_ops: dict[str, dict[str, Any]] = {}
     for err in errors:
         code = err["code"]
         path = err["json_path"]

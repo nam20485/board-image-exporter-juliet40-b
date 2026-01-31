@@ -6,9 +6,9 @@ including geometric primitives (Point, Polygon, Polyline, Circle) and domain
 models (Board, Component, Trace, Via, Layer, Stackup).
 """
 
-from typing import Any
 from enum import Enum
 from math import isfinite, sqrt
+from typing import Any
 
 
 class LayerType(str, Enum):
@@ -393,7 +393,9 @@ class Pin:
         if not name:
             raise ValueError("Pin name cannot be empty")
         if not isinstance(rotation, (int, float)):
-            raise ValueError(f"Pin rotation must be numeric, got {type(rotation).__name__}: {rotation}")
+            raise ValueError(
+                f"Pin rotation must be numeric, got {type(rotation).__name__}: {rotation}"
+            )
         if not isfinite(rotation):
             raise ValueError(f"Pin rotation must be finite, got {rotation}")
 
@@ -438,7 +440,9 @@ class Component:
         if not footprint:
             raise ValueError("Component footprint cannot be empty")
         if not isinstance(rotation, (int, float)):
-            raise ValueError(f"Component rotation must be numeric, got {type(rotation).__name__}: {rotation}")
+            raise ValueError(
+                f"Component rotation must be numeric, got {type(rotation).__name__}: {rotation}"
+            )
         if not isfinite(rotation):
             raise ValueError(f"Component rotation must be finite, got {rotation}")
 

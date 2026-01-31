@@ -2,7 +2,7 @@
 
 import pytest
 
-from pcb_render.units import normalize_value, normalize_coordinates
+from pcb_render.units import normalize_coordinates, normalize_value
 
 
 class TestNormalizeValue:

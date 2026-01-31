@@ -99,7 +99,7 @@ def load_json_file():
     """Factory fixture to load JSON files from the fixtures directory."""
     def _load_file(filename: str) -> dict[str, Any]:
         fixtures_dir = Path(__file__).parent / "fixtures"
-        with open(fixtures_dir / filename, "r") as f:
+        with open(fixtures_dir / filename) as f:
             return json.load(f)
 
     return _load_file
@@ -110,7 +110,7 @@ def load_invalid_board():
     """Factory fixture to load invalid board JSON files."""
     def _load_file(filename: str) -> dict[str, Any]:
         invalid_dir = Path(__file__).parent / "invalid_boards"
-        with open(invalid_dir / filename, "r") as f:
+        with open(invalid_dir / filename) as f:
             return json.load(f)
 
     return _load_file

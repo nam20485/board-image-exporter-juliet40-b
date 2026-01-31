@@ -2,8 +2,8 @@
 
 import pytest
 
-from pcb_render.parse import parse_board
 from pcb_render.models import LayerType, Side
+from pcb_render.parse import parse_board
 
 
 class TestParseBoard:

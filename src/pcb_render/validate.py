@@ -5,15 +5,15 @@ This module provides comprehensive validation of PCB board definitions,
 checking geometry, topology, connectivity, and physical constraints.
 """
 
-from .models import Board, Component
 from .errors import (
-    ValidationError,
     E001_BOUNDARY_NOT_CLOSED,
     E006_NONEXISTENT_LAYER,
     E007_NONEXISTENT_NET,
     E008_SELF_INTERSECTING_BOUNDARY,
     E009_COMPONENT_OUTSIDE_BOUNDARY,
+    ValidationError,
 )
+from .models import Board, Component
 
 
 def validate_board(board: Board) -> list[ValidationError]:
