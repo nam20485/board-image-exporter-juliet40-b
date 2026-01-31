@@ -50,13 +50,13 @@ def print_explanation(expl: dict[str, Any]) -> None:
     print(f"\nExplanation for {expl['code']}:")
     print(f"  Summary: {expl['summary']}")
     print(f"  Likely cause: {expl['likely_cause']}")
-    if expl['fix_steps']:
+    if expl["fix_steps"]:
         print("  Suggested fix steps:")
-        for step in expl['fix_steps']:
+        for step in expl["fix_steps"]:
             print(f"    - {step}")
-    if expl['proposed_patch']:
+    if expl["proposed_patch"]:
         print("  Proposed patch:")
-        for op in expl['proposed_patch']:
+        for op in expl["proposed_patch"]:
             print(f"    - {op}")
     print(f"  Confidence: {expl['confidence']:.2f}")
     print(f"  Needs human review: {expl['needs_human_review']}")
@@ -134,6 +134,7 @@ def apply_patch(board: dict[str, Any], patch_ops: list[dict[str, Any]]) -> dict[
         A new dictionary with the operations applied.
     """
     import copy
+
     result = copy.deepcopy(board)
     for op in patch_ops:
         if op.get("op") != "replace":

@@ -63,17 +63,21 @@ def _validate_boundary(board: Board) -> list[ValidationError]:
     # Check if boundary is closed
     if not board.boundary.is_closed():
         # This should be caught during construction, but double-check
-        errors.append(ValidationError.from_code(
-            E001_BOUNDARY_NOT_CLOSED,
-            json_path="boundary",
-        ))
+        errors.append(
+            ValidationError.from_code(
+                E001_BOUNDARY_NOT_CLOSED,
+                json_path="boundary",
+            )
+        )
 
     # Check for self-intersection
     if board.boundary.self_intersects():
-        errors.append(ValidationError.from_code(
-            E008_SELF_INTERSECTING_BOUNDARY,
-            json_path="boundary",
-        ))
+        errors.append(
+            ValidationError.from_code(
+                E008_SELF_INTERSECTING_BOUNDARY,
+                json_path="boundary",
+            )
+        )
 
     return errors
 
@@ -95,17 +99,21 @@ def _validate_traces(board: Board) -> list[ValidationError]:
     for trace_uid, trace in board.traces.items():
         # Check if layer hash exists
         if board.stackup.get_layer_by_hash(trace.layer_hash) is None:
-            errors.append(ValidationError.from_code(
-                E006_NONEXISTENT_LAYER,
-                json_path=f"traces.{trace_uid}.layer_hash",
-            ))
+            errors.append(
+                ValidationError.from_code(
+                    E006_NONEXISTENT_LAYER,
+                    json_path=f"traces.{trace_uid}.layer_hash",
+                )
+            )
 
         # Check if net exists
         if trace.net not in board.nets:
-            errors.append(ValidationError.from_code(
-                E007_NONEXISTENT_NET,
-                json_path=f"traces.{trace_uid}.net",
-            ))
+            errors.append(
+                ValidationError.from_code(
+                    E007_NONEXISTENT_NET,
+                    json_path=f"traces.{trace_uid}.net",
+                )
+            )
 
     return errors
 
@@ -117,24 +125,30 @@ def _validate_vias(board: Board) -> list[ValidationError]:
     for via_uid, via in board.vias.items():
         # Check if start layer exists
         if board.stackup.get_layer_by_hash(via.start_layer) is None:
-            errors.append(ValidationError.from_code(
-                E006_NONEXISTENT_LAYER,
-                json_path=f"vias.{via_uid}.start_layer",
-            ))
+            errors.append(
+                ValidationError.from_code(
+                    E006_NONEXISTENT_LAYER,
+                    json_path=f"vias.{via_uid}.start_layer",
+                )
+            )
 
         # Check if end layer exists
         if board.stackup.get_layer_by_hash(via.end_layer) is None:
-            errors.append(ValidationError.from_code(
-                E006_NONEXISTENT_LAYER,
-                json_path=f"vias.{via_uid}.end_layer",
-            ))
+            errors.append(
+                ValidationError.from_code(
+                    E006_NONEXISTENT_LAYER,
+                    json_path=f"vias.{via_uid}.end_layer",
+                )
+            )
 
         # Check if net exists
         if via.net not in board.nets:
-            errors.append(ValidationError.from_code(
-                E007_NONEXISTENT_NET,
-                json_path=f"vias.{via_uid}.net",
-            ))
+            errors.append(
+                ValidationError.from_code(
+                    E007_NONEXISTENT_NET,
+                    json_path=f"vias.{via_uid}.net",
+                )
+            )
 
     return errors
 
@@ -151,10 +165,12 @@ def _validate_components(board: Board) -> list[ValidationError]:
         # Check if component pin nets exist
         for pin_name, pin in component.pins.items():
             if pin.net and pin.net not in board.nets:
-                errors.append(ValidationError.from_code(
-                    E007_NONEXISTENT_NET,
-                    json_path=f"components.{ref_des}.pins.{pin_name}.net",
-                ))
+                errors.append(
+                    ValidationError.from_code(
+                        E007_NONEXISTENT_NET,
+                        json_path=f"components.{ref_des}.pins.{pin_name}.net",
+                    )
+                )
 
     return errors
 
@@ -178,13 +194,18 @@ def _validate_component_placement(
     comp_min, comp_max = component.outline.bounds()
 
     # Check if component is entirely outside board
-    if (comp_max.x < board_min.x or comp_min.x > board_max.x or
-        comp_max.y < board_min.y or comp_min.y > board_max.y):
-
-        errors.append(ValidationError.from_code(
-            E009_COMPONENT_OUTSIDE_BOUNDARY,
-            json_path=f"components.{ref_des}.position",
-        ))
+    if (
+        comp_max.x < board_min.x
+        or comp_min.x > board_max.x
+        or comp_max.y < board_min.y
+        or comp_min.y > board_max.y
+    ):
+        errors.append(
+            ValidationError.from_code(
+                E009_COMPONENT_OUTSIDE_BOUNDARY,
+                json_path=f"components.{ref_des}.position",
+            )
+        )
 
     return errors
 

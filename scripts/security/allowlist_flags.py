@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Utility to convert the TruffleHog allowlist YAML into CLI flags."""
+
 from __future__ import annotations
 
 import argparse

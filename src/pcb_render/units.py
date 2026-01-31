@@ -45,15 +45,11 @@ def normalize_value(value: float, from_unit: str) -> float:
 
     if from_unit_upper not in _CONVERSION_FACTORS:
         valid_units = ", ".join(_CONVERSION_FACTORS.keys())
-        raise ValueError(
-            f"Unknown unit '{from_unit}'. Valid units are: {valid_units}"
-        )
+        raise ValueError(f"Unknown unit '{from_unit}'. Valid units are: {valid_units}")
 
     # Type check the value
     if not isinstance(value, (int, float)):
-        raise TypeError(
-            f"Coordinate value must be numeric, got {type(value).__name__}: {value}"
-        )
+        raise TypeError(f"Coordinate value must be numeric, got {type(value).__name__}: {value}")
 
     factor = _CONVERSION_FACTORS[from_unit_upper]
     return value * factor
@@ -89,15 +85,11 @@ def normalize_coordinates(coords: list, from_unit: str) -> list[Any]:
     # Detect format by checking the first element
     if isinstance(coords[0], list):
         # Nested format: [[x1, y1], [x2, y2], ...]
-        return [
-            [normalize_value(x, from_unit), normalize_value(y, from_unit)]
-            for x, y in coords
-        ]
+        return [[normalize_value(x, from_unit), normalize_value(y, from_unit)] for x, y in coords]
     else:
         # Flat format: [x1, y1, x2, y2, ...]
         if len(coords) % 2 != 0:
             raise ValueError(
-                f"Flat coordinate list must have even number of elements, "
-                f"got {len(coords)}"
+                f"Flat coordinate list must have even number of elements, got {len(coords)}"
             )
         return [normalize_value(v, from_unit) for v in coords]

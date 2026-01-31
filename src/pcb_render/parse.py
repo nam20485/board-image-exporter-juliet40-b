@@ -53,9 +53,7 @@ def parse_board(json_data: dict[str, Any]) -> Board:
     # Validate design units
     valid_units = ["MICRON", "MILLIMETER", "MILS", "INCH"]
     if design_units not in valid_units:
-        raise ValueError(
-            f"Invalid designUnits '{design_units}'. Must be one of: {valid_units}"
-        )
+        raise ValueError(f"Invalid designUnits '{design_units}'. Must be one of: {valid_units}")
 
     # Extract board name
     name = json_data.get("name", "unnamed_board")
@@ -67,9 +65,7 @@ def parse_board(json_data: dict[str, Any]) -> Board:
     stackup = _parse_stackup(json_data.get("stackup", {}))
 
     # Parse components
-    components = _parse_components(
-        json_data.get("components", {}), design_units
-    )
+    components = _parse_components(json_data.get("components", {}), design_units)
 
     # Parse traces
     traces = _parse_traces(json_data.get("traces", {}), design_units)
@@ -100,11 +96,13 @@ def parse_board(json_data: dict[str, Any]) -> Board:
         nets=nets,
     )
 
-    logger.info(f"Successfully parsed board '{name}' with "
-                f"{len(stackup.layers)} layers, "
-                f"{len(components)} components, "
-                f"{len(traces)} traces, "
-                f"{len(vias)} vias")
+    logger.info(
+        f"Successfully parsed board '{name}' with "
+        f"{len(stackup.layers)} layers, "
+        f"{len(components)} components, "
+        f"{len(traces)} traces, "
+        f"{len(vias)} vias"
+    )
 
     return board
 
@@ -173,9 +171,7 @@ def _parse_stackup(stackup_data: dict[str, Any]) -> Stackup:
     return Stackup(layers)
 
 
-def _parse_components(
-    components_data: dict[str, Any], design_units: str
-) -> dict[str, Component]:
+def _parse_components(components_data: dict[str, Any], design_units: str) -> dict[str, Component]:
     """
     Parse all components.
 
@@ -208,9 +204,7 @@ def _parse_components(
         # Parse rotation
         rotation = comp_data.get("rotation", 0.0)
         if not isinstance(rotation, (int, float)):
-            raise ValueError(
-                f"Component '{ref_des}' has non-numeric rotation: {rotation}"
-            )
+            raise ValueError(f"Component '{ref_des}' has non-numeric rotation: {rotation}")
 
         # Parse outline if present
         outline = None
@@ -226,8 +220,7 @@ def _parse_components(
         for pin_name, pin_data in comp_data.get("pins", {}).items():
             pin_pos_data = pin_data.get("position", {"x": 0, "y": 0})
             normalized_pin_pos = normalize_coordinates(
-                [pin_pos_data.get("x", 0), pin_pos_data.get("y", 0)],
-                design_units
+                [pin_pos_data.get("x", 0), pin_pos_data.get("y", 0)], design_units
             )
             pin_position = Point(normalized_pin_pos[0], normalized_pin_pos[1])
 
@@ -258,9 +251,7 @@ def _parse_components(
     return components
 
 
-def _parse_traces(
-    traces_data: dict[str, Any], design_units: str
-) -> dict[str, Trace]:
+def _parse_traces(traces_data: dict[str, Any], design_units: str) -> dict[str, Trace]:
     """
     Parse all traces.
 
@@ -300,9 +291,7 @@ def _parse_traces(
     return traces
 
 
-def _parse_vias(
-    vias_data: dict[str, Any], design_units: str
-) -> dict[str, Via]:
+def _parse_vias(vias_data: dict[str, Any], design_units: str) -> dict[str, Via]:
     """
     Parse all vias.
 
@@ -319,8 +308,7 @@ def _parse_vias(
         # Parse center position
         center_data = via_data.get("center", {"x": 0, "y": 0})
         normalized_center = normalize_coordinates(
-            [center_data.get("x", 0), center_data.get("y", 0)],
-            design_units
+            [center_data.get("x", 0), center_data.get("y", 0)], design_units
         )
         center = Point(normalized_center[0], normalized_center[1])
 
@@ -342,9 +330,7 @@ def _parse_vias(
     return vias
 
 
-def _parse_keepouts(
-    keepouts_data: list[dict[str, Any]], design_units: str
-) -> list[Polygon]:
+def _parse_keepouts(keepouts_data: list[dict[str, Any]], design_units: str) -> list[Polygon]:
     """
     Parse all keepout regions.
 

@@ -44,14 +44,8 @@ class TestParseBoard:
         """Test that missing designUnits defaults to MICRON."""
         data = {
             "name": "test",
-            "boundary": {
-                "points": [[0, 0], [1000, 0], [1000, 1000], [0, 1000], [0, 0]]
-            },
-            "stackup": {
-                "layers": [
-                    {"name": "TOP", "type": "TOP", "index": 0, "hash": "top"}
-                ]
-            },
+            "boundary": {"points": [[0, 0], [1000, 0], [1000, 1000], [0, 1000], [0, 0]]},
+            "stackup": {"layers": [{"name": "TOP", "type": "TOP", "index": 0, "hash": "top"}]},
         }
         board = parse_board(data)
         assert board.design_units == "MICRON"
@@ -61,14 +55,8 @@ class TestParseBoard:
         data = {
             "name": "test",
             "designUnits": "INVALID_UNIT",
-            "boundary": {
-                "points": [[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]
-            },
-            "stackup": {
-                "layers": [
-                    {"name": "TOP", "type": "TOP", "index": 0, "hash": "top"}
-                ]
-            },
+            "boundary": {"points": [[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]},
+            "stackup": {"layers": [{"name": "TOP", "type": "TOP", "index": 0, "hash": "top"}]},
         }
         with pytest.raises(ValueError, match="Invalid designUnits"):
             parse_board(data)
@@ -78,11 +66,7 @@ class TestParseBoard:
         data = {
             "name": "test",
             "boundary": {},
-            "stackup": {
-                "layers": [
-                    {"name": "TOP", "type": "TOP", "index": 0, "hash": "top"}
-                ]
-            },
+            "stackup": {"layers": [{"name": "TOP", "type": "TOP", "index": 0, "hash": "top"}]},
         }
         with pytest.raises(ValueError, match="boundary is missing"):
             parse_board(data)
@@ -92,11 +76,7 @@ class TestParseBoard:
         data = {
             "name": "test",
             "boundary": {"points": []},
-            "stackup": {
-                "layers": [
-                    {"name": "TOP", "type": "TOP", "index": 0, "hash": "top"}
-                ]
-            },
+            "stackup": {"layers": [{"name": "TOP", "type": "TOP", "index": 0, "hash": "top"}]},
         }
         with pytest.raises(ValueError, match="no points"):
             parse_board(data)
@@ -152,7 +132,7 @@ class TestParseBoard:
 
         via1 = board.vias["via1"]
         assert via1.outer_diameter == 0.8  # 800 MICRON
-        assert via1.hole_diameter == 0.4   # 400 MICRON
+        assert via1.hole_diameter == 0.4  # 400 MICRON
 
     def test_parse_keepouts(self, load_json_file):
         """Test parsing keepout regions."""
@@ -168,14 +148,8 @@ class TestParseBoard:
         data = {
             "name": "test",
             "designUnits": "MILLIMETER",
-            "boundary": {
-                "points": [[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]]
-            },
-            "stackup": {
-                "layers": [
-                    {"name": "TOP", "type": "TOP", "index": 0, "hash": "top"}
-                ]
-            },
+            "boundary": {"points": [[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]]},
+            "stackup": {"layers": [{"name": "TOP", "type": "TOP", "index": 0, "hash": "top"}]},
         }
         board = parse_board(data)
         assert len(board.components) == 0
@@ -185,14 +159,8 @@ class TestParseBoard:
         data = {
             "name": "test",
             "designUnits": "MILLIMETER",
-            "boundary": {
-                "points": [[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]]
-            },
-            "stackup": {
-                "layers": [
-                    {"name": "TOP", "type": "TOP", "index": 0, "hash": "top"}
-                ]
-            },
+            "boundary": {"points": [[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]]},
+            "stackup": {"layers": [{"name": "TOP", "type": "TOP", "index": 0, "hash": "top"}]},
         }
         board = parse_board(data)
         assert len(board.traces) == 0
@@ -202,13 +170,9 @@ class TestParseBoard:
         data = {
             "name": "test",
             "designUnits": "MILLIMETER",
-            "boundary": {
-                "points": [[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]]
-            },
+            "boundary": {"points": [[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]]},
             "stackup": {
-                "layers": [
-                    {"name": "TOP", "type": "INVALID_TYPE", "index": 0, "hash": "top"}
-                ]
+                "layers": [{"name": "TOP", "type": "INVALID_TYPE", "index": 0, "hash": "top"}]
             },
         }
         with pytest.raises(ValueError, match="Invalid layer type"):
@@ -219,14 +183,8 @@ class TestParseBoard:
         data = {
             "name": "test",
             "designUnits": "MILLIMETER",
-            "boundary": {
-                "points": [[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]]
-            },
-            "stackup": {
-                "layers": [
-                    {"name": "TOP", "type": "TOP", "index": 0, "hash": "top"}
-                ]
-            },
+            "boundary": {"points": [[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]]},
+            "stackup": {"layers": [{"name": "TOP", "type": "TOP", "index": 0, "hash": "top"}]},
             "components": {
                 "R1": {
                     "footprint": "RES",

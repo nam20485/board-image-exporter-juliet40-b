@@ -13,6 +13,7 @@ from typing import Any
 
 class LayerType(str, Enum):
     """Enumeration of PCB layer types."""
+
     TOP = "TOP"
     BOTTOM = "BOTTOM"
     MID = "MID"
@@ -22,6 +23,7 @@ class LayerType(str, Enum):
 
 class Side(str, Enum):
     """Enumeration of component placement sides."""
+
     FRONT = "FRONT"
     BACK = "BACK"
 
@@ -180,9 +182,7 @@ class Polygon:
 
         return False
 
-    def _segments_intersect(
-        self, p1: Point, p2: Point, p3: Point, p4: Point
-    ) -> bool:
+    def _segments_intersect(self, p1: Point, p2: Point, p3: Point, p4: Point) -> bool:
         """
         Check if two line segments intersect.
 
@@ -193,6 +193,7 @@ class Polygon:
         Returns:
             True if segments intersect, False otherwise
         """
+
         def ccw(a: Point, b: Point, c: Point) -> bool:
             """Check if three points are counter-clockwise."""
             return (c.y - a.y) * (b.x - a.x) > (b.y - a.y) * (c.x - a.x)
@@ -223,9 +224,7 @@ class Polyline:
         # Validate all points have finite coordinates
         for i, p in enumerate(points):
             if not isfinite(p.x) or not isfinite(p.y):
-                raise ValueError(
-                    f"Polyline point {i} has non-finite coordinates: ({p.x}, {p.y})"
-                )
+                raise ValueError(f"Polyline point {i} has non-finite coordinates: ({p.x}, {p.y})")
 
         self.points = points
 
@@ -474,9 +473,7 @@ class Trace:
         ValueError: If width is not positive
     """
 
-    def __init__(
-        self, uid: str, net: str, layer_hash: str, path: Polyline, width: float
-    ):
+    def __init__(self, uid: str, net: str, layer_hash: str, path: Polyline, width: float):
         """Initialize a Trace with properties."""
         if not uid:
             raise ValueError("Trace uid cannot be empty")

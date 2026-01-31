@@ -33,6 +33,7 @@ from typing import Any
 
 class ValidationError(dict[str, Any]):
     """A dict subclass to hold structured validation error information."""
+
     code: str
     message: str
     json_path: str
@@ -137,8 +138,7 @@ def validate_board(board: dict[str, Any]) -> list[ValidationError]:
                 ValidationError(
                     code="via.dimensions.negative",
                     message=(
-                        f"Via '{via_name}' has non‑positive diameter ({diameter}) "
-                        f"or hole ({hole})."
+                        f"Via '{via_name}' has non‑positive diameter ({diameter}) or hole ({hole})."
                     ),
                     json_path=f"/vias/{via_name}",
                     severity="error",

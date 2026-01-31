@@ -10,6 +10,7 @@ from enum import Enum
 
 class ErrorSeverity(str, Enum):
     """Severity level for validation errors."""
+
     ERROR = "ERROR"
     WARNING = "WARNING"
     INFO = "INFO"
@@ -143,9 +144,7 @@ class ValidationError:
         self.suggestion = suggestion
 
     @classmethod
-    def from_code(
-        cls, code: str, json_path: str | None = None
-    ) -> "ValidationError":
+    def from_code(cls, code: str, json_path: str | None = None) -> "ValidationError":
         """
         Create a ValidationError from a predefined error code.
 

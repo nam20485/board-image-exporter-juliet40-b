@@ -97,6 +97,7 @@ def sample_board(sample_polygon: Polygon, sample_stackup: Stackup) -> Board:
 @pytest.fixture
 def load_json_file():
     """Factory fixture to load JSON files from the fixtures directory."""
+
     def _load_file(filename: str) -> dict[str, Any]:
         fixtures_dir = Path(__file__).parent / "fixtures"
         with open(fixtures_dir / filename) as f:
@@ -108,6 +109,7 @@ def load_json_file():
 @pytest.fixture
 def load_invalid_board():
     """Factory fixture to load invalid board JSON files."""
+
     def _load_file(filename: str) -> dict[str, Any]:
         invalid_dir = Path(__file__).parent / "invalid_boards"
         with open(invalid_dir / filename) as f:

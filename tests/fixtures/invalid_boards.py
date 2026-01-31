@@ -131,22 +131,26 @@ def create_invalid_boards():
 
     # E010: Duplicate layer hash
     board_e010 = json.loads(json.dumps(VALID_BOARD))  # Deep copy
-    board_e010["stackup"]["layers"].append({
-        "name": "BOTTOM",
-        "type": "BOTTOM",
-        "index": 1,
-        "hash": "top_layer_hash",  # Duplicate hash
-    })
+    board_e010["stackup"]["layers"].append(
+        {
+            "name": "BOTTOM",
+            "type": "BOTTOM",
+            "index": 1,
+            "hash": "top_layer_hash",  # Duplicate hash
+        }
+    )
     save_invalid_board(board_e010, output_dir / "duplicate_layer_hash.json")
 
     # E011: Non-sequential layer indices
     board_e011 = json.loads(json.dumps(VALID_BOARD))  # Deep copy
-    board_e011["stackup"]["layers"].append({
-        "name": "BOTTOM",
-        "type": "BOTTOM",
-        "index": 5,  # Not sequential
-        "hash": "bottom_layer_hash",
-    })
+    board_e011["stackup"]["layers"].append(
+        {
+            "name": "BOTTOM",
+            "type": "BOTTOM",
+            "index": 5,  # Not sequential
+            "hash": "bottom_layer_hash",
+        }
+    )
     save_invalid_board(board_e011, output_dir / "non_sequential_layer_indices.json")
 
     # E012: Empty stackup

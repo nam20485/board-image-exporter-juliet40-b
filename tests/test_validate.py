@@ -114,8 +114,7 @@ class TestValidationErrorClass:
         from pcb_render.errors import ValidationError
 
         error = ValidationError.from_code(
-            E006_NONEXISTENT_LAYER,
-            json_path="traces.trace1.layer_hash"
+            E006_NONEXISTENT_LAYER, json_path="traces.trace1.layer_hash"
         )
 
         assert error.code == E006_NONEXISTENT_LAYER
@@ -139,10 +138,7 @@ class TestValidationErrorClass:
         """Test ValidationError repr."""
         from pcb_render.errors import ValidationError
 
-        error = ValidationError.from_code(
-            E006_NONEXISTENT_LAYER,
-            json_path="test.path"
-        )
+        error = ValidationError.from_code(E006_NONEXISTENT_LAYER, json_path="test.path")
         repr_str = repr(error)
 
         assert "ValidationError" in repr_str

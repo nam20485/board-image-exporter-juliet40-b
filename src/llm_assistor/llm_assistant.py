@@ -33,8 +33,9 @@ class LlmEngine(Protocol):
     system prompt and a user prompt and returns a Python dictionary.
     """
 
-    def generate_json(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
-        ...  # pragma: no cover
+    def generate_json(
+        self, system_prompt: str, user_prompt: str
+    ) -> dict[str, Any]: ...  # pragma: no cover
 
 
 class NoopEngine:
@@ -61,6 +62,7 @@ class OnnxRuntimeEngine:
         self.model_path = model_path
         try:
             import onnxruntime as ort  # type: ignore
+
             self.ort = ort
         except ImportError:
             # We cannot import ONNX Runtime in this environment; fall back
@@ -90,7 +92,7 @@ class OnnxRuntimeEngine:
             "fix_steps": [
                 "Review each error and ensure numeric fields are positive.",
                 "Adjust via hole sizes so they are smaller than their diameters.",
-                "Re‑run validation to confirm issues are resolved."
+                "Re‑run validation to confirm issues are resolved.",
             ],
             "proposed_patch": [],  # this stub never proposes a patch
             "confidence": 0.5,
