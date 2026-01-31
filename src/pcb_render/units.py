@@ -6,7 +6,8 @@ to millimeters, which is the internal representation used throughout
 the PCB renderer.
 """
 
-from typing import Sequence, overload, cast
+from collections.abc import Sequence
+from typing import cast, overload
 
 # Conversion factors to millimeters
 _CONVERSION_FACTORS = {
