@@ -50,6 +50,12 @@ def normalize_value(value: float, from_unit: str) -> float:
             f"Unknown unit '{from_unit}'. Valid units are: {valid_units}"
         )
 
+    # Type check the value
+    if not isinstance(value, (int, float)):
+        raise TypeError(
+            f"Coordinate value must be numeric, got {type(value).__name__}: {value}"
+        )
+
     factor = _CONVERSION_FACTORS[from_unit_upper]
     return value * factor
 

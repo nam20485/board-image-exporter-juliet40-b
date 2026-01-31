@@ -28,7 +28,7 @@ Each error is returned as a dictionary with the following keys:
 """
 
 import json
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 
 
 class ValidationError(Dict[str, Any]):

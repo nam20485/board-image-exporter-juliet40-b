@@ -42,7 +42,7 @@
         "x": 10.0,
         "y": 10.0
       },
-      "rotation": "invalid",
+      "rotation": 0.0,
       "side": "FRONT",
       "pins": {
         "1": {
@@ -59,8 +59,8 @@
   },
   "traces": {
     "trace1": {
-      "net": "NONEXISTENT_NET",
-      "layer_hash": "nonexistent_layer",
+      "net": "GND",
+      "layer_hash": "top_layer_hash",
       "path": {
         "points": [
           [
@@ -77,22 +77,10 @@
           ]
         ]
       },
-      "width": -0.5
+      "width": 0.2
     }
   },
-  "vias": {
-    "via1": {
-      "net": "GND",
-      "center": {
-        "x": 25.0,
-        "y": 25.0
-      },
-      "outer_diameter": 0.8,
-      "hole_diameter": 1.0,
-      "start_layer": "top_layer_hash",
-      "end_layer": "top_layer_hash"
-    }
-  },
+  "vias": {},
   "pours": {},
   "keepouts": [],
   "nets": {

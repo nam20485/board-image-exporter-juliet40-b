@@ -21,8 +21,7 @@ required.
 
 from __future__ import annotations
 
-import json
-from typing import Any, Dict, Iterable, List, Optional, Protocol
+from typing import Any, Dict, List, Optional, Protocol
 
 from validator import ValidationError
 

@@ -6,7 +6,6 @@ including error severity levels and specific error codes for board validation.
 """
 
 from enum import Enum
-from typing import Any
 
 
 class ErrorSeverity(str, Enum):
@@ -18,6 +17,7 @@ class ErrorSeverity(str, Enum):
 
 # Error code constants
 E001_MISSING_BOUNDARY = "E001_MISSING_BOUNDARY"
+E001_BOUNDARY_NOT_CLOSED = "E001_BOUNDARY_NOT_CLOSED"
 E002_MALFORMED_COORDINATES = "E002_MALFORMED_COORDINATES"
 E003_INVALID_ROTATION = "E003_INVALID_ROTATION"
 E004_NEGATIVE_WIDTH = "E004_NEGATIVE_WIDTH"
@@ -39,6 +39,11 @@ _ERROR_MESSAGES = {
         "severity": ErrorSeverity.ERROR,
         "message": "Board boundary is missing or undefined",
         "suggestion": "Add a 'boundary' field with a polygon containing at least 3 coordinate pairs",
+    },
+    E001_BOUNDARY_NOT_CLOSED: {
+        "severity": ErrorSeverity.ERROR,
+        "message": "Board boundary polygon is not closed (first point != last point)",
+        "suggestion": "Ensure the boundary polygon's first point equals its last point",
     },
     E002_MALFORMED_COORDINATES: {
         "severity": ErrorSeverity.ERROR,

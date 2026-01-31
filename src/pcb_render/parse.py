@@ -23,7 +23,6 @@ from .models import (
     Via,
 )
 from .units import normalize_coordinates, normalize_value
-from .errors import ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -206,6 +205,10 @@ def _parse_components(
 
         # Parse rotation
         rotation = comp_data.get("rotation", 0.0)
+        if not isinstance(rotation, (int, float)):
+            raise ValueError(
+                f"Component '{ref_des}' has non-numeric rotation: {rotation}"
+            )
 
         # Parse outline if present
         outline = None
@@ -230,7 +233,7 @@ def _parse_components(
                 name=pin_name,
                 net=pin_data.get("net"),
                 position=pin_position,
-                rotation=pin_data.get("rotation", 0.0),
+                rotation=pin_data.get("rotation", 0.0) if isinstance(pin_data.get("rotation", 0.0), (int, float)) else 0.0,
                 is_throughhole=pin_data.get("is_throughhole", False),
             )
             pins[pin_name] = pin

@@ -38,8 +38,9 @@ dev = [
     "pytest-cov>=4.0",
 ]
 
-[project.scripts]
-pcb-render = "pcb_render.cli:main"
+# [project.scripts]
+# CLI module not yet implemented - reserved for Phase 2
+# pcb-render = "pcb_render.cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/pcb_render"]

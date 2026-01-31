@@ -11,14 +11,11 @@ from pcb_render.models import (
     Component,
     Layer,
     LayerType,
-    Pin,
     Point,
     Polygon,
     Polyline,
     Side,
     Stackup,
-    Trace,
-    Via,
 )
 
 

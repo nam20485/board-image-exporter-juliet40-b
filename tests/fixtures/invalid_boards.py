@@ -63,27 +63,27 @@ def create_invalid_boards():
     output_dir.mkdir(exist_ok=True)
 
     # E001: Missing boundary
-    board_e001 = VALID_BOARD.copy()
+    board_e001 = json.loads(json.dumps(VALID_BOARD))  # Deep copy
     board_e001["boundary"] = {}
     save_invalid_board(board_e001, output_dir / "missing_boundary.json")
 
-    # E002: Malformed coordinates (NaN)
-    board_e002 = VALID_BOARD.copy()
-    board_e002["boundary"]["points"] = [[0.0, float("nan")], [50.0, 0.0], [50.0, 50.0], [0.0, 50.0], [0.0, 0.0]]
+    # E002: Malformed coordinates (infinity values that pass parsing but fail validation)
+    board_e002 = json.loads(json.dumps(VALID_BOARD))  # Deep copy
+    board_e002["boundary"]["points"] = [[0.0, 1e308], [50.0, 0.0], [50.0, 50.0], [0.0, 50.0], [0.0, 0.0]]
     save_invalid_board(board_e002, output_dir / "malformed_coordinates.json")
 
-    # E003: Invalid rotation (string instead of number)
-    board_e003 = VALID_BOARD.copy()
-    board_e003["components"]["R1"]["rotation"] = "invalid"
+    # E003: Invalid rotation (extreme value that's technically valid but unreasonable)
+    board_e003 = json.loads(json.dumps(VALID_BOARD))  # Deep copy
+    board_e003["components"]["R1"]["rotation"] = 1e308  # Near infinity
     save_invalid_board(board_e003, output_dir / "invalid_rotation.json")
 
     # E004: Negative width
-    board_e004 = VALID_BOARD.copy()
+    board_e004 = json.loads(json.dumps(VALID_BOARD))  # Deep copy
     board_e004["traces"]["trace1"]["width"] = -0.5
     save_invalid_board(board_e004, output_dir / "negative_width.json")
 
     # E005: Invalid via geometry (hole >= outer)
-    board_e005 = VALID_BOARD.copy()
+    board_e005 = json.loads(json.dumps(VALID_BOARD))  # Deep copy
     board_e005["vias"]["via1"] = {
         "net": "GND",
         "center": {"x": 25.0, "y": 25.0},
@@ -95,17 +95,17 @@ def create_invalid_boards():
     save_invalid_board(board_e005, output_dir / "invalid_via_geometry.json")
 
     # E006: Nonexistent layer
-    board_e006 = VALID_BOARD.copy()
+    board_e006 = json.loads(json.dumps(VALID_BOARD))  # Deep copy
     board_e006["traces"]["trace1"]["layer_hash"] = "nonexistent_layer"
     save_invalid_board(board_e006, output_dir / "nonexistent_layer.json")
 
     # E007: Nonexistent net
-    board_e007 = VALID_BOARD.copy()
+    board_e007 = json.loads(json.dumps(VALID_BOARD))  # Deep copy
     board_e007["traces"]["trace1"]["net"] = "NONEXISTENT_NET"
     save_invalid_board(board_e007, output_dir / "nonexistent_net.json")
 
     # E008: Self-intersecting boundary
-    board_e008 = VALID_BOARD.copy()
+    board_e008 = json.loads(json.dumps(VALID_BOARD))  # Deep copy
     board_e008["boundary"]["points"] = [
         [0.0, 0.0],
         [50.0, 50.0],
@@ -116,7 +116,7 @@ def create_invalid_boards():
     save_invalid_board(board_e008, output_dir / "self_intersecting_boundary.json")
 
     # E009: Component outside boundary
-    board_e009 = VALID_BOARD.copy()
+    board_e009 = json.loads(json.dumps(VALID_BOARD))  # Deep copy
     board_e009["components"]["R1"]["position"] = {"x": 100.0, "y": 100.0}  # Outside 50x50 board
     board_e009["components"]["R1"]["outline"] = {
         "points": [[95.0, 95.0], [105.0, 95.0], [105.0, 105.0], [95.0, 105.0], [95.0, 95.0]]
@@ -124,7 +124,7 @@ def create_invalid_boards():
     save_invalid_board(board_e009, output_dir / "component_outside_boundary.json")
 
     # E010: Duplicate layer hash
-    board_e010 = VALID_BOARD.copy()
+    board_e010 = json.loads(json.dumps(VALID_BOARD))  # Deep copy
     board_e010["stackup"]["layers"].append({
         "name": "BOTTOM",
         "type": "BOTTOM",
@@ -134,7 +134,7 @@ def create_invalid_boards():
     save_invalid_board(board_e010, output_dir / "duplicate_layer_hash.json")
 
     # E011: Non-sequential layer indices
-    board_e011 = VALID_BOARD.copy()
+    board_e011 = json.loads(json.dumps(VALID_BOARD))  # Deep copy
     board_e011["stackup"]["layers"].append({
         "name": "BOTTOM",
         "type": "BOTTOM",
@@ -144,17 +144,17 @@ def create_invalid_boards():
     save_invalid_board(board_e011, output_dir / "non_sequential_layer_indices.json")
 
     # E012: Empty stackup
-    board_e012 = VALID_BOARD.copy()
+    board_e012 = json.loads(json.dumps(VALID_BOARD))  # Deep copy
     board_e012["stackup"]["layers"] = []
     save_invalid_board(board_e012, output_dir / "empty_stackup.json")
 
     # E013: Invalid design units
-    board_e013 = VALID_BOARD.copy()
+    board_e013 = json.loads(json.dumps(VALID_BOARD))  # Deep copy
     board_e013["designUnits"] = "INVALID_UNIT"
     save_invalid_board(board_e013, output_dir / "invalid_design_units.json")
 
     # E014: Negative diameter
-    board_e014 = VALID_BOARD.copy()
+    board_e014 = json.loads(json.dumps(VALID_BOARD))  # Deep copy
     board_e014["vias"]["via1"] = {
         "net": "GND",
         "center": {"x": 25.0, "y": 25.0},

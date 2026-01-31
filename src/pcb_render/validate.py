@@ -5,13 +5,13 @@ This module provides comprehensive validation of PCB board definitions,
 checking geometry, topology, connectivity, and physical constraints.
 """
 
-from typing import Any
-
-from .models import Board, Component, Trace, Via
+from .models import Board, Component
 from .errors import (
     ValidationError,
+    E001_BOUNDARY_NOT_CLOSED,
     E006_NONEXISTENT_LAYER,
     E007_NONEXISTENT_NET,
+    E008_SELF_INTERSECTING_BOUNDARY,
     E009_COMPONENT_OUTSIDE_BOUNDARY,
 )
 
@@ -63,18 +63,15 @@ def _validate_boundary(board: Board) -> list[ValidationError]:
     # Check if boundary is closed
     if not board.boundary.is_closed():
         # This should be caught during construction, but double-check
-        errors.append(ValidationError(
-            code="E001_BOUNDARY_NOT_CLOSED",
-            severity=ValidationError.from_code("E001_MISSING_BOUNDARY").severity,
-            message="Board boundary polygon is not closed (first point != last point)",
+        errors.append(ValidationError.from_code(
+            E001_BOUNDARY_NOT_CLOSED,
             json_path="boundary",
-            suggestion="Ensure the boundary polygon's first point equals its last point",
         ))
 
     # Check for self-intersection
     if board.boundary.self_intersects():
         errors.append(ValidationError.from_code(
-            "E008_SELF_INTERSECTING_BOUNDARY",
+            E008_SELF_INTERSECTING_BOUNDARY,
             json_path="boundary",
         ))
 

@@ -1,7 +1,5 @@
 """Tests for board validation."""
 
-import pytest
-
 from pcb_render.parse import parse_board
 from pcb_render.validate import validate_board
 from pcb_render.errors import (

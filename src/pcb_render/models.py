@@ -8,8 +8,7 @@ models (Board, Component, Trace, Via, Layer, Stackup).
 
 from typing import Any
 from enum import Enum
-from math import isfinite, sqrt, isnan
-import sys
+from math import isfinite, sqrt
 
 
 class LayerType(str, Enum):
@@ -156,26 +155,25 @@ class Polygon:
         if n < 4:
             return False
 
-        # For a closed polygon, the last edge connects the last point to the first
-        # We need to check n edges (including the closing edge)
-        num_edges = n if self.is_closed() else n - 1
+        # For a closed polygon, we have n-1 edges (the last point equals the first)
+        # For an open polygon, we would also have n-1 edges
+        # But for self-intersection checks, we check n-1 unique edges
+        num_edges = n - 1
 
         for i in range(num_edges):
             p1 = self.points[i]
-            p2 = self.points[(i + 1) % n]
+            p2 = self.points[i + 1]
 
             # Check against all non-adjacent edges
-            for j in range(i + 1, num_edges):
-                # Skip adjacent edges (they share a vertex)
-                if abs(j - i) <= 1:
-                    continue
-
-                # Skip first/last edge pair for closed polygons (they're adjacent)
+            # Start from i+2 to skip the adjacent edge
+            for j in range(i + 2, num_edges):
+                # For closed polygons, skip checking edge i against the edge that connects to it
+                # Skip first and last edge (they share the first/last vertex)
                 if i == 0 and j == num_edges - 1:
                     continue
 
                 p3 = self.points[j]
-                p4 = self.points[(j + 1) % n]
+                p4 = self.points[j + 1]
 
                 if self._segments_intersect(p1, p2, p3, p4):
                     return True
@@ -394,6 +392,8 @@ class Pin:
         """Initialize a Pin with properties."""
         if not name:
             raise ValueError("Pin name cannot be empty")
+        if not isinstance(rotation, (int, float)):
+            raise ValueError(f"Pin rotation must be numeric, got {type(rotation).__name__}: {rotation}")
         if not isfinite(rotation):
             raise ValueError(f"Pin rotation must be finite, got {rotation}")
 
@@ -437,6 +437,8 @@ class Component:
             raise ValueError("Component ref_des cannot be empty")
         if not footprint:
             raise ValueError("Component footprint cannot be empty")
+        if not isinstance(rotation, (int, float)):
+            raise ValueError(f"Component rotation must be numeric, got {type(rotation).__name__}: {rotation}")
         if not isfinite(rotation):
             raise ValueError(f"Component rotation must be finite, got {rotation}")
 

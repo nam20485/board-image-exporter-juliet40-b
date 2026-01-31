@@ -1,6 +1,5 @@
 """Tests for PCB data models."""
 
-import math
 import pytest
 
 from pcb_render.models import (
@@ -18,7 +17,6 @@ from pcb_render.models import (
     Trace,
     Via,
 )
-from pcb_render.errors import ValidationError
 
 
 class TestPoint:
