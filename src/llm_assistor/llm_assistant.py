@@ -23,7 +23,7 @@ from __future__ import annotations
 
 from typing import Any, Protocol
 
-from validator import ValidationError
+from .validator import ValidationError
 
 
 class LlmEngine(Protocol):
@@ -138,7 +138,7 @@ def explain_errors(
         )
         response = engine.generate_json(system_prompt, user_prompt)
         # Validate response structure and fill missing fields with defaults
-        explanation = {
+        explanation: dict[str, Any] = {
             "code": err["code"],
             "summary": response.get("summary", "No explanation provided."),
             "likely_cause": response.get("likely_cause", "Unknown cause."),
@@ -180,22 +180,31 @@ def suggest_patch(errors: list[ValidationError], board: dict[str, Any]) -> list[
             # Remove leading '/' from path to navigate dictionary
             parts = path.lstrip("/").split("/")  # e.g., ["vias", "via1"]
             # Attempt to read current diameter
-            current_via = board
+            current_via: dict[str, Any] = board
+            found_via = True
             try:
                 for p in parts:
-                    current_via = current_via[p]
+                    next_value = current_via.get(p)
+                    if not isinstance(next_value, dict):
+                        found_via = False
+                        break
+                    current_via = next_value
             except Exception:
-                current_via = None
+                found_via = False
             # If diameter is available, set hole to half of diameter
-            try:
-                diameter = float(current_via.get("diameter"))
-                new_value = diameter / 2.0
-                # Path to hole field
-                hole_path = f"{path}/hole"
-                patch_ops[hole_path] = {"op": "replace", "path": hole_path, "value": new_value}
-            except Exception:
-                # fallback: no patch
-                continue
+            if found_via:
+                diameter_value = current_via.get("diameter")
+                if isinstance(diameter_value, (int, float)):
+                    new_value = float(diameter_value) / 2.0
+                    # Path to hole field
+                    hole_path = f"{path}/hole"
+                    patch_ops[hole_path] = {
+                        "op": "replace",
+                        "path": hole_path,
+                        "value": new_value,
+                    }
+                else:
+                    continue
         # Additional heuristics can be implemented here
 
     # Return patch operations in a deterministic order

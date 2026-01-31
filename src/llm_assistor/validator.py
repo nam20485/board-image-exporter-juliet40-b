@@ -28,16 +28,32 @@ Each error is returned as a dictionary with the following keys:
 """
 
 import json
-from typing import Any
+from typing import Any, TypedDict, TypeGuard, cast
 
 
-class ValidationError(dict[str, Any]):
-    """A dict subclass to hold structured validation error information."""
+class ValidationError(TypedDict):
+    """Structured validation error information."""
 
     code: str
     message: str
     json_path: str
     severity: str
+
+
+def _coerce_mapping(value: object) -> dict[str, dict[str, Any]]:
+    if not isinstance(value, dict):
+        return {}
+    result: dict[str, dict[str, Any]] = {}
+    for key, item in value.items():
+        if isinstance(key, str) and isinstance(item, dict):
+            result[key] = cast(dict[str, Any], item)
+    return result
+
+
+def _is_coord_pair(value: object) -> TypeGuard[tuple[float, float] | list[float]]:
+    if not isinstance(value, (list, tuple)) or len(value) != 2:
+        return False
+    return all(isinstance(item, (int, float)) for item in value)
 
 
 def validate_board(board: dict[str, Any]) -> list[ValidationError]:
@@ -64,35 +80,42 @@ def validate_board(board: dict[str, Any]) -> list[ValidationError]:
         )
 
     # Validate traces
-    traces = board.get("traces", {})
+    raw_traces = board.get("traces", {})
+    traces: dict[str, dict[str, Any]] = {}
+    if isinstance(raw_traces, dict):
+        for trace_name, trace in raw_traces.items():
+            if isinstance(trace_name, str) and isinstance(trace, dict):
+                traces[trace_name] = trace
     for trace_name, trace in traces.items():
         width = trace.get("width")
         if width is None:
             errors.append(
-                ValidationError(
-                    code="trace.width.missing",
-                    message=f"Trace '{trace_name}' is missing a width field.",
-                    json_path=f"/traces/{trace_name}/width",
-                    severity="error",
-                )
+                {
+                    "code": "trace.width.missing",
+                    "message": f"Trace '{trace_name}' is missing a width field.",
+                    "json_path": f"/traces/{trace_name}/width",
+                    "severity": "error",
+                }
             )
         elif not isinstance(width, (int, float)):
             errors.append(
-                ValidationError(
-                    code="trace.width.type",
-                    message=f"Trace '{trace_name}' width must be numeric, got {type(width)}.",
-                    json_path=f"/traces/{trace_name}/width",
-                    severity="error",
-                )
+                {
+                    "code": "trace.width.type",
+                    "message": (
+                        f"Trace '{trace_name}' width must be numeric, got {type(width)}."
+                    ),
+                    "json_path": f"/traces/{trace_name}/width",
+                    "severity": "error",
+                }
             )
         elif width <= 0:
             errors.append(
-                ValidationError(
-                    code="trace.width.negative",
-                    message=f"Trace '{trace_name}' has non‑positive width {width}.",
-                    json_path=f"/traces/{trace_name}/width",
-                    severity="error",
-                )
+                {
+                    "code": "trace.width.negative",
+                    "message": f"Trace '{trace_name}' has non‑positive width {width}.",
+                    "json_path": f"/traces/{trace_name}/width",
+                    "severity": "error",
+                }
             )
 
         # Validate start and end coordinates
@@ -100,62 +123,71 @@ def validate_board(board: dict[str, Any]) -> list[ValidationError]:
             coord = trace.get(coord_name)
             if not isinstance(coord, (list, tuple)) or len(coord) != 2:
                 errors.append(
-                    ValidationError(
-                        code=f"trace.{coord_name}.invalid",
-                        message=f"Trace '{trace_name}' {coord_name} must be a two‑element list.",
-                        json_path=f"/traces/{trace_name}/{coord_name}",
-                        severity="error",
-                    )
+                    {
+                        "code": f"trace.{coord_name}.invalid",
+                        "message": (
+                            f"Trace '{trace_name}' {coord_name} must be a two‑element list."
+                        ),
+                        "json_path": f"/traces/{trace_name}/{coord_name}",
+                        "severity": "error",
+                    }
                 )
 
     # Validate vias
-    vias = board.get("vias", {})
+    raw_vias = board.get("vias", {})
+    vias: dict[str, dict[str, Any]] = {}
+    if isinstance(raw_vias, dict):
+        for via_name, via in raw_vias.items():
+            if isinstance(via_name, str) and isinstance(via, dict):
+                vias[via_name] = via
     for via_name, via in vias.items():
         diameter = via.get("diameter")
         hole = via.get("hole")
         if diameter is None or hole is None:
             errors.append(
-                ValidationError(
-                    code="via.dimensions.missing",
-                    message=f"Via '{via_name}' must have both 'diameter' and 'hole' fields.",
-                    json_path=f"/vias/{via_name}",
-                    severity="error",
-                )
+                {
+                    "code": "via.dimensions.missing",
+                    "message": (
+                        f"Via '{via_name}' must have both 'diameter' and 'hole' fields."
+                    ),
+                    "json_path": f"/vias/{via_name}",
+                    "severity": "error",
+                }
             )
             continue
         if not isinstance(diameter, (int, float)) or not isinstance(hole, (int, float)):
             errors.append(
-                ValidationError(
-                    code="via.dimensions.type",
-                    message=f"Via '{via_name}' dimensions must be numeric.",
-                    json_path=f"/vias/{via_name}",
-                    severity="error",
-                )
+                {
+                    "code": "via.dimensions.type",
+                    "message": f"Via '{via_name}' dimensions must be numeric.",
+                    "json_path": f"/vias/{via_name}",
+                    "severity": "error",
+                }
             )
             continue
         if diameter <= 0 or hole <= 0:
             errors.append(
-                ValidationError(
-                    code="via.dimensions.negative",
-                    message=(
+                {
+                    "code": "via.dimensions.negative",
+                    "message": (
                         f"Via '{via_name}' has non‑positive diameter ({diameter}) or hole ({hole})."
                     ),
-                    json_path=f"/vias/{via_name}",
-                    severity="error",
-                )
+                    "json_path": f"/vias/{via_name}",
+                    "severity": "error",
+                }
             )
             continue
         if hole >= diameter:
             errors.append(
-                ValidationError(
-                    code="via.hole.exceeds_diameter",
-                    message=(
+                {
+                    "code": "via.hole.exceeds_diameter",
+                    "message": (
                         f"Via '{via_name}' hole {hole} is greater than or equal to "
                         f"diameter {diameter}."
                     ),
-                    json_path=f"/vias/{via_name}",
-                    severity="error",
-                )
+                    "json_path": f"/vias/{via_name}",
+                    "severity": "error",
+                }
             )
 
     return errors

@@ -6,6 +6,7 @@ including error severity levels and specific error codes for board validation.
 """
 
 from enum import Enum
+from typing import TypedDict
 
 
 class ErrorSeverity(str, Enum):
@@ -35,7 +36,13 @@ E014_NEGATIVE_DIAMETER = "E014_NEGATIVE_DIAMETER"
 
 
 # Error messages and suggestions
-_ERROR_MESSAGES = {
+class ErrorInfo(TypedDict):
+    severity: ErrorSeverity
+    message: str
+    suggestion: str
+
+
+_ERROR_MESSAGES: dict[str, ErrorInfo] = {
     E001_MISSING_BOUNDARY: {
         "severity": ErrorSeverity.ERROR,
         "message": "Board boundary is missing or undefined",

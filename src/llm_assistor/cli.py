@@ -36,8 +36,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-import llm_assistant
-import validator
+from . import llm_assistant, validator
 
 
 def print_error(err: validator.ValidationError) -> None:

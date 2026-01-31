@@ -6,7 +6,7 @@ to millimeters, which is the internal representation used throughout
 the PCB renderer.
 """
 
-from typing import Any
+from typing import Sequence, overload, cast
 
 # Conversion factors to millimeters
 _CONVERSION_FACTORS = {
@@ -17,7 +17,7 @@ _CONVERSION_FACTORS = {
 }
 
 
-def normalize_value(value: float, from_unit: str) -> float:
+def normalize_value(value: object, from_unit: str) -> float:
     """
     Convert a value from the specified unit to millimeters.
 
@@ -55,7 +55,21 @@ def normalize_value(value: float, from_unit: str) -> float:
     return value * factor
 
 
-def normalize_coordinates(coords: list, from_unit: str) -> list[Any]:
+@overload
+def normalize_coordinates(coords: Sequence[float], from_unit: str) -> list[float]: ...
+
+
+@overload
+def normalize_coordinates(
+    coords: Sequence[Sequence[float]],
+    from_unit: str,
+) -> list[list[float]]: ...
+
+
+def normalize_coordinates(
+    coords: Sequence[float] | Sequence[Sequence[float]],
+    from_unit: str,
+) -> list[float] | list[list[float]]:
     """
     Convert coordinate values from the specified unit to millimeters.
 
@@ -83,13 +97,20 @@ def normalize_coordinates(coords: list, from_unit: str) -> list[Any]:
         return []
 
     # Detect format by checking the first element
-    if isinstance(coords[0], list):
+    first = coords[0]
+    if isinstance(first, (list, tuple)):
         # Nested format: [[x1, y1], [x2, y2], ...]
-        return [[normalize_value(x, from_unit), normalize_value(y, from_unit)] for x, y in coords]
+        nested_coords = cast(Sequence[Sequence[float]], coords)
+        return [
+            [normalize_value(x, from_unit), normalize_value(y, from_unit)]
+            for x, y in nested_coords
+        ]
     else:
         # Flat format: [x1, y1, x2, y2, ...]
-        if len(coords) % 2 != 0:
+        flat_coords = cast(Sequence[float], coords)
+        if len(flat_coords) % 2 != 0:
             raise ValueError(
-                f"Flat coordinate list must have even number of elements, got {len(coords)}"
+                "Flat coordinate list must have even number of elements, "
+                f"got {len(flat_coords)}"
             )
-        return [normalize_value(v, from_unit) for v in coords]
+        return [normalize_value(v, from_unit) for v in flat_coords]

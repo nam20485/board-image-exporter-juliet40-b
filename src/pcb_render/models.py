@@ -385,23 +385,25 @@ class Pin:
         name: str,
         net: str | None,
         position: Point,
-        rotation: float = 0.0,
+        rotation: float | int = 0.0,
         is_throughhole: bool = False,
     ):
         """Initialize a Pin with properties."""
         if not name:
             raise ValueError("Pin name cannot be empty")
-        if not isinstance(rotation, (int, float)):
+        try:
+            rotation_value = float(rotation)
+        except (TypeError, ValueError) as exc:
             raise ValueError(
                 f"Pin rotation must be numeric, got {type(rotation).__name__}: {rotation}"
-            )
-        if not isfinite(rotation):
-            raise ValueError(f"Pin rotation must be finite, got {rotation}")
+            ) from exc
+        if not isfinite(rotation_value):
+            raise ValueError(f"Pin rotation must be finite, got {rotation_value}")
 
         self.name = name
         self.net = net
         self.position = position
-        self.rotation = rotation
+        self.rotation = rotation_value
         self.is_throughhole = is_throughhole
 
     def __repr__(self) -> str:
@@ -428,7 +430,7 @@ class Component:
         ref_des: str,
         footprint: str,
         position: Point,
-        rotation: float = 0.0,
+        rotation: float | int = 0.0,
         side: Side = Side.FRONT,
         outline: Polygon | None = None,
         pins: dict[str, Pin] | None = None,
@@ -438,17 +440,19 @@ class Component:
             raise ValueError("Component ref_des cannot be empty")
         if not footprint:
             raise ValueError("Component footprint cannot be empty")
-        if not isinstance(rotation, (int, float)):
+        try:
+            rotation_value = float(rotation)
+        except (TypeError, ValueError) as exc:
             raise ValueError(
                 f"Component rotation must be numeric, got {type(rotation).__name__}: {rotation}"
-            )
-        if not isfinite(rotation):
-            raise ValueError(f"Component rotation must be finite, got {rotation}")
+            ) from exc
+        if not isfinite(rotation_value):
+            raise ValueError(f"Component rotation must be finite, got {rotation_value}")
 
         self.ref_des = ref_des
         self.footprint = footprint
         self.position = position
-        self.rotation = rotation
+        self.rotation = rotation_value
         self.side = side
         self.outline = outline
         self.pins = pins or {}

@@ -6,7 +6,7 @@ and normalize all coordinates to millimeters.
 """
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 from .models import (
     Board,
@@ -126,10 +126,18 @@ def _parse_boundary(boundary_data: dict[str, Any], design_units: str) -> Polygon
         raise ValueError("Board boundary has no points")
 
     # Normalize coordinates
-    normalized_coords = normalize_coordinates(points_data, design_units)
+    normalized_coords = cast(
+        list[float] | list[list[float]],
+        normalize_coordinates(points_data, design_units),
+    )
+    if normalized_coords and isinstance(normalized_coords[0], list):
+        coord_pairs = cast(list[list[float]], normalized_coords)
+    else:
+        flat_coords = cast(list[float], normalized_coords)
+        coord_pairs = [flat_coords[i : i + 2] for i in range(0, len(flat_coords), 2)]
 
     # Convert to Point objects
-    points = [Point(x, y) for x, y in normalized_coords]
+    points = [Point(x, y) for x, y in coord_pairs]
 
     return Polygon(points)
 
@@ -148,7 +156,7 @@ def _parse_stackup(stackup_data: dict[str, Any]) -> Stackup:
     if not layers_list:
         raise ValueError("Stackup must contain at least one layer")
 
-    layers = []
+    layers: list[Layer] = []
     for layer_data in layers_list:
         layer_type_str = layer_data.get("type", "MID")
         try:
@@ -182,7 +190,7 @@ def _parse_components(components_data: dict[str, Any], design_units: str) -> dic
     Returns:
         Dictionary of Component objects keyed by reference designator
     """
-    components = {}
+    components: dict[str, Component] = {}
 
     for ref_des, comp_data in components_data.items():
         # Parse position
@@ -211,12 +219,22 @@ def _parse_components(components_data: dict[str, Any], design_units: str) -> dic
         if "outline" in comp_data:
             outline_points_data = comp_data["outline"].get("points", [])
             if outline_points_data:
-                normalized_outline = normalize_coordinates(outline_points_data, design_units)
-                outline_points = [Point(x, y) for x, y in normalized_outline]
+                normalized_outline = cast(
+                    list[float] | list[list[float]],
+                    normalize_coordinates(outline_points_data, design_units),
+                )
+                if normalized_outline and isinstance(normalized_outline[0], list):
+                    outline_pairs = cast(list[list[float]], normalized_outline)
+                else:
+                    flat_outline = cast(list[float], normalized_outline)
+                    outline_pairs = [
+                        flat_outline[i : i + 2] for i in range(0, len(flat_outline), 2)
+                    ]
+                outline_points = [Point(x, y) for x, y in outline_pairs]
                 outline = Polygon(outline_points)
 
         # Parse pins
-        pins = {}
+        pins: dict[str, Pin] = {}
         for pin_name, pin_data in comp_data.get("pins", {}).items():
             pin_pos_data = pin_data.get("position", {"x": 0, "y": 0})
             normalized_pin_pos = normalize_coordinates(
@@ -262,7 +280,7 @@ def _parse_traces(traces_data: dict[str, Any], design_units: str) -> dict[str, T
     Returns:
         Dictionary of Trace objects keyed by UID
     """
-    traces = {}
+    traces: dict[str, Trace] = {}
 
     for trace_uid, trace_data in traces_data.items():
         # Parse path (polyline)
@@ -271,8 +289,16 @@ def _parse_traces(traces_data: dict[str, Any], design_units: str) -> dict[str, T
         if not path_points_data:
             raise ValueError(f"Trace {trace_uid} has no path points")
 
-        normalized_path = normalize_coordinates(path_points_data, design_units)
-        path_points = [Point(x, y) for x, y in normalized_path]
+        normalized_path = cast(
+            list[float] | list[list[float]],
+            normalize_coordinates(path_points_data, design_units),
+        )
+        if normalized_path and isinstance(normalized_path[0], list):
+            path_pairs = cast(list[list[float]], normalized_path)
+        else:
+            flat_path = cast(list[float], normalized_path)
+            path_pairs = [flat_path[i : i + 2] for i in range(0, len(flat_path), 2)]
+        path_points = [Point(x, y) for x, y in path_pairs]
         path = Polyline(path_points)
 
         # Normalize width
@@ -302,7 +328,7 @@ def _parse_vias(vias_data: dict[str, Any], design_units: str) -> dict[str, Via]:
     Returns:
         Dictionary of Via objects keyed by UID
     """
-    vias = {}
+    vias: dict[str, Via] = {}
 
     for via_uid, via_data in vias_data.items():
         # Parse center position
@@ -341,15 +367,23 @@ def _parse_keepouts(keepouts_data: list[dict[str, Any]], design_units: str) -> l
     Returns:
         List of Polygon objects representing keepout regions
     """
-    keepouts = []
+    keepouts: list[Polygon] = []
 
     for keepout_data in keepouts_data:
         points_data = keepout_data.get("points", [])
         if not points_data:
             continue
 
-        normalized = normalize_coordinates(points_data, design_units)
-        points = [Point(x, y) for x, y in normalized]
+        normalized = cast(
+            list[float] | list[list[float]],
+            normalize_coordinates(points_data, design_units),
+        )
+        if normalized and isinstance(normalized[0], list):
+            keepout_pairs = cast(list[list[float]], normalized)
+        else:
+            flat_keepout = cast(list[float], normalized)
+            keepout_pairs = [flat_keepout[i : i + 2] for i in range(0, len(flat_keepout), 2)]
+        points = [Point(x, y) for x, y in keepout_pairs]
         keepout = Polygon(points)
         keepouts.append(keepout)
 
