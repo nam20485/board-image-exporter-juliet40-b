@@ -28,7 +28,8 @@ Each error is returned as a dictionary with the following keys:
 """
 
 import json
-from typing import Any, Sequence, TypedDict, cast
+from collections.abc import Sequence
+from typing import Any, TypedDict, cast
 
 
 class ValidationError(TypedDict):
@@ -38,9 +39,6 @@ class ValidationError(TypedDict):
     message: str
     json_path: str
     severity: str
-
-
-
 
 
 def validate_board(board: dict[str, Any]) -> list[ValidationError]:
@@ -139,7 +137,8 @@ def validate_board(board: dict[str, Any]) -> list[ValidationError]:
                             {
                                 "code": f"trace.{coord_name}.coordinates.type",
                                 "message": (
-                                    f"Trace '{trace_name}' {coord_name} coordinates must be numeric."
+                                    f"Trace '{trace_name}' {coord_name} coordinates "
+                                    "must be numeric."
                                 ),
                                 "json_path": f"/traces/{trace_name}/{coord_name}",
                                 "severity": "error",
