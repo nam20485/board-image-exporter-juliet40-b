@@ -103,15 +103,13 @@ def normalize_coordinates(
         # Nested format: [[x1, y1], [x2, y2], ...]
         nested_coords = cast(Sequence[Sequence[float]], coords)
         return [
-            [normalize_value(x, from_unit), normalize_value(y, from_unit)]
-            for x, y in nested_coords
+            [normalize_value(x, from_unit), normalize_value(y, from_unit)] for x, y in nested_coords
         ]
     else:
         # Flat format: [x1, y1, x2, y2, ...]
         flat_coords = cast(Sequence[float], coords)
         if len(flat_coords) % 2 != 0:
             raise ValueError(
-                "Flat coordinate list must have even number of elements, "
-                f"got {len(flat_coords)}"
+                f"Flat coordinate list must have even number of elements, got {len(flat_coords)}"
             )
         return [normalize_value(v, from_unit) for v in flat_coords]

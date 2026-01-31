@@ -101,9 +101,7 @@ def validate_board(board: dict[str, Any]) -> list[ValidationError]:
             errors.append(
                 {
                     "code": "trace.width.type",
-                    "message": (
-                        f"Trace '{trace_name}' width must be numeric, got {type(width)}."
-                    ),
+                    "message": (f"Trace '{trace_name}' width must be numeric, got {type(width)}."),
                     "json_path": f"/traces/{trace_name}/width",
                     "severity": "error",
                 }
@@ -147,9 +145,7 @@ def validate_board(board: dict[str, Any]) -> list[ValidationError]:
             errors.append(
                 {
                     "code": "via.dimensions.missing",
-                    "message": (
-                        f"Via '{via_name}' must have both 'diameter' and 'hole' fields."
-                    ),
+                    "message": (f"Via '{via_name}' must have both 'diameter' and 'hole' fields."),
                     "json_path": f"/vias/{via_name}",
                     "severity": "error",
                 }

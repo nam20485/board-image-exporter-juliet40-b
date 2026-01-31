@@ -16,4 +16,13 @@ For when the API is having trouble, follow these steps to reset yourself and get
 10. Test the solution.
 11. If it doesn't work, go back to step 1.
 
-If you still havee trouble
+If you still have trouble, stop what you are doing and ask the user for help.
+
+Describe:
+- what you were trying to do
+- what is not wokring
+
+Display:
+- the exact request/command you are trying to execute
+- the exact error message or result you are receiving
+- what you have already tried
