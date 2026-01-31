@@ -21,7 +21,7 @@ required.
 
 from __future__ import annotations
 
-from typing import Any, Protocol
+from typing import Any, Protocol, cast
 
 from .validator import ValidationError
 
@@ -188,7 +188,7 @@ def suggest_patch(errors: list[ValidationError], board: dict[str, Any]) -> list[
                     if not isinstance(next_value, dict):
                         found_via = False
                         break
-                    current_via = next_value
+                    current_via = cast(dict[str, Any], next_value)
             except Exception:
                 found_via = False
             # If diameter is available, set hole to half of diameter
